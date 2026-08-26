@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "rainbow-dqn-framework"
+version = "0.1.0"
+description = "A dqn framework that allows us to use the rainbow dqn architecture, fully or partially by enabling or disabling rainbow modules"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
