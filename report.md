@@ -22,7 +22,10 @@ Rainbow Framework
 │
 ├── Factory / Composition
 │      │
-│      └── builds configured components
+│      ├── builds configured components
+│      └── preprocessor
+│             ├── enabled -> yes/no
+│             └── implementation -> preprocessing strategy
 │
 ├── Environment
 │      │
