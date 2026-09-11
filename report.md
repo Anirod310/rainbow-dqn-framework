@@ -9,10 +9,6 @@ This project follows the one I just completed on Lunar Lander, in which I implem
 In my previous project, I faced a limitation that I really wanted to correct in this one: I wasn't able to test my system in different configurations. Indeed, the Rainbow architecture consists of different modules that improve upon the standard DQN algorithm; these modules are independent, yet when combined, they deliver exceptional performance. However, I reached a point where I wanted to test different configurations and compare their performance (module 1 with module 3 vs. module 1 with module 2 with module 3, for example), but my previous architecture didn't allow me to do that. That's why, in this project, I wanted to treat every module as an independent part, allowing me to enable or disable each one and thus test any configuration I want. Therefore, I chose to structure the project as a framework that everyone could download and use on any compatible environment, with any configuration as well. Here's the project structure:
 
 
-
- 
-
-
 ```bash
 Rainbow Framework
 │
@@ -63,24 +59,17 @@ Rainbow Framework
        └── evaluates a trained Agent
 ``` 
 ```bash
-                    Configuration
-                         │
-                         ▼
-                      Factory
-                         │
-                         ▼
-                       Agent
-                    ┌────┼────┐
-                    ▼    ▼    ▼
-                  Model Replay Learning
-                           │      │
-                           │      ├── Target Strategy
-                           │      ├── Return Strategy
-                           │      └── Distributional Strategy
-                           │
-                           └────────── Model
-                         
-             ┌─────────────┴─────────────┐
-             ▼                           ▼
-         Training                    Evaluation
+Configuration
+      ↓
+Composition Validator
+      ↓
+Factory
+      ↓
+Environment ───┐
+Preprocessor ──┼──→ Agent
+Model ─────────┤
+Replay Buffer ─┤
+Learning ──────┘
+      ↓
+Training / Evaluation
 ```
