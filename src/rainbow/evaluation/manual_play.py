@@ -7,7 +7,11 @@ env = gym.make('ALE/Breakout-v5', obs_type="rgb", repeat_action_probability=0.0,
 
 obs, info = env.reset()
 
-while True :
+done = False
+
+while not done :
     obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
+    if terminated or truncated :
+        done = True
 
-
+env.close()
