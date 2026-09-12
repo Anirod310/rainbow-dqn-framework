@@ -23,14 +23,11 @@ Rainbow Framework
 │             ├── enabled -> yes/no
 │             └── implementation -> preprocessing strategy
 │
-├── Environment
-│      │
-│      └── Gymnasium / custom environments
-│
 ├── Agent
 │      │
 │      ├── Model
 │      │    ├── Standard Network
+│      │    ├── CNN Network
 │      │    ├── Dueling Network
 │      │    ├── Noisy Networks
 │      │    └── Distributional / C51
