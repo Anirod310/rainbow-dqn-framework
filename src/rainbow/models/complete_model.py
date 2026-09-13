@@ -16,9 +16,3 @@ class CompleteModel(nn.Module):
 
         return x
 
-    
-dummy = torch.rand((1, 4, 84, 84))
-
-model = CompleteModel(input_dim=(4, 84, 84), output_dim=4)
-
-print(model(dummy).shape)

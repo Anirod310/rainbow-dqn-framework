@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .base_model import BaseModel
+from .interface_model import BaseModel
 import torch
 
 

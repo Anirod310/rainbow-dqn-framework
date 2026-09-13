@@ -8,4 +8,4 @@ class BaseModel(ABC, nn.Module):
 
     @abstractmethod
     def forward(self, x):
-        ...
+        pass
