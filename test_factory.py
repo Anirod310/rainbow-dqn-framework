@@ -1,4 +1,7 @@
-from src.rainbow.factory import factory
+from rainbow.factory import Factory
+from config import config
+
+factory = Factory(config)
 
 env = factory.create_environment()
 
@@ -10,8 +13,9 @@ processed_obs = preprocessor.reset(obs)
 
 action = env.action_space.sample()
 
-obs, reward, terminated, truncated, info = env.step()
+obs, reward, terminated, truncated, info = env.step(action)
 
 processed_obs = preprocessor.process(obs)
 
-print(f"observation shape : {processed_obs.shape}")
+print(f"raw observation shape : {obs.shape}")
+print(f"processed observation shape : {processed_obs.shape}")

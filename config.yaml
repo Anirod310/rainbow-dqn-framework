@@ -5,4 +5,4 @@ preprocessing:
   enabled: true
   type: atari
   frame_stack_size: 4
-  target_image_size: (84,84)
+  target_image_size: [84, 84]
