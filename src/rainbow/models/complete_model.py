@@ -1,7 +1,6 @@
 from .cnn_backbone import CNNBackbone
 from.q_value_head import QValueHead
 import torch.nn as nn
-import torch
 
 
 class CompleteModel(nn.Module):
