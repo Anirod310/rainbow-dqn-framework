@@ -8,4 +8,5 @@ class Agent():
 
     def select_action(self, observation):
         observation_tensor = torch.tensor(observation).unsqueeze(0)
+        
 

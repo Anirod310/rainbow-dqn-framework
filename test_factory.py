@@ -17,5 +17,7 @@ obs, reward, terminated, truncated, info = env.step(action)
 
 processed_obs = preprocessor.process(obs)
 
-print(f"raw observation shape : {obs.shape}")
-print(f"processed observation shape : {processed_obs.shape}")
+print(processed_obs.shape)
+print(processed_obs.dtype)
+print(processed_obs.min())
+print(processed_obs.max())

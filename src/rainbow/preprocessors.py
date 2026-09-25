@@ -15,7 +15,7 @@ class AtariPreprocessor():
         self.last_raw_frame = observation
 
         gray_observation = cv2.cvtColor(observation, cv2.COLOR_RGB2GRAY)
-        resized_observation = np.array(cv2.resize(gray_observation, self.target_image_size, interpolation=cv2.INTER_LINEAR), dtype='float32')
+        resized_observation = (np.array(cv2.resize(gray_observation, self.target_image_size, interpolation=cv2.INTER_LINEAR), dtype='float32'))/255
 
         for _ in range(self.frame_stack_size):
            self.deque_frames.append(resized_observation)
@@ -28,7 +28,7 @@ class AtariPreprocessor():
         self.last_raw_frame = observation
 
         gray_observation = cv2.cvtColor(maxed_observation, cv2.COLOR_RGB2GRAY)
-        resized_observation = np.array(cv2.resize(gray_observation, self.target_image_size, interpolation=cv2.INTER_LINEAR), dtype='float32')
+        resized_observation = (np.array(cv2.resize(gray_observation, self.target_image_size, interpolation=cv2.INTER_LINEAR), dtype='float32'))/255
 
 
         self.deque_frames.append(resized_observation)
