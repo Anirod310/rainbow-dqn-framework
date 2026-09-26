@@ -10,4 +10,5 @@ class Agent():
         observation_tensor = torch.tensor(observation).unsqueeze(0)
         q_values = self.model(observation_tensor)
         return q_values
+        
 
