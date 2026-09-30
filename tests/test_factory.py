@@ -2,9 +2,7 @@ from rainbow.factory import Factory
 from config import config
 
 factory = Factory(config)
-
 env = factory.create_environment()
-
 preprocessor = factory.create_preprocessor()
 
 obs, info = env.reset()
