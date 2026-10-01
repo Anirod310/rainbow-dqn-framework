@@ -2,6 +2,7 @@ import gymnasium as gym
 import ale_py
 from .preprocessors import AtariPreprocessor
 from .models.complete_model import CompleteModel
+from .agent.agent import Agent
 
 
 class Factory():
@@ -26,12 +27,20 @@ class Factory():
         input_dim = (
             self.preprocessor.frame_stack_size,
             *self.preprocessor.target_image_size
-        )
+        ) #To Solve : case when preprocessor is disabled
 
         output_dim = self.environment.action_space.n
 
         self.model = CompleteModel(input_dim, output_dim)
 
         return self.model
+
+    def create_agent(self):
+        self.agent = Agent(self.model,
+                           self.environment.action_space,
+                           self.config['agent']['epsilon'])
+
+        return self.agent
+        
 
 

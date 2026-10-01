@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .base_model import BaseModel
+from .interface_model import BaseModel
 
 class CNNBackbone(BaseModel):
     def __init__(self, input_dim):

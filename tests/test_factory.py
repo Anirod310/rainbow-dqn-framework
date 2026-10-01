@@ -2,8 +2,11 @@ from rainbow.factory import Factory
 from config import config
 
 factory = Factory(config)
+
 env = factory.create_environment()
 preprocessor = factory.create_preprocessor()
+model = factory.create_model()
+
 
 obs, info = env.reset()
 
@@ -19,3 +22,4 @@ print(processed_obs.shape)
 print(processed_obs.dtype)
 print(processed_obs.min())
 print(processed_obs.max())
+print(model)
