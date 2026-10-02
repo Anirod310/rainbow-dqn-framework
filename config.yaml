@@ -9,3 +9,6 @@ preprocessing:
 
 agent:
   epsilon: 1.0
+
+replay_buffer:
+  mini_batch_size: 32
