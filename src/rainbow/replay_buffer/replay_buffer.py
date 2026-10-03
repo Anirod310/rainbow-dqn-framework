@@ -13,8 +13,19 @@ class ReplayBuffer():
         if len(self.transitions) < self.mini_batch_size:
             return 
         else:
+            indices = np.random.choice(
+                len(self.transitions),
+                size=self.mini_batch_size,
+                replace=False
+            )
+
             mini_batch = []
-            for loop in range(self.mini_batch_size):
-                mini_batch.append((self.transitions[np.random.choice(len(self.transitions), replace=False)]))
+
+            for index in indices:
+                transition = self.transitions[index]
+                mini_batch.append(transition)
 
             return mini_batch
+
+
+    
