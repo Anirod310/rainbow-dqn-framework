@@ -9,8 +9,12 @@ class ReplayBuffer():
         self.transitions.append((observation, action, reward, next_observation))
 
     def select_random_mini_batch(self):
-        mini_batch = []
-        for loop in range(self.mini_batch_size):
-            mini_batch.append((self.transitions[np.random.randint(len(self.transitions))]))
 
-        return mini_batch
+        if len(self.transitions) < self.mini_batch_size:
+            return 
+        else:
+            mini_batch = []
+            for loop in range(self.mini_batch_size):
+                mini_batch.append((self.transitions[np.random.choice(len(self.transitions), replace=False)]))
+
+            return mini_batch
