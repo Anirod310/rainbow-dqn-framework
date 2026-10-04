@@ -5,8 +5,8 @@ class ReplayBuffer():
         self.transitions = []
         self.mini_batch_size = config['replay_buffer']['mini_batch_size']
 
-    def store_transition(self, observation, action, reward, next_observation):
-        self.transitions.append((observation, action, reward, next_observation))
+    def store_transition(self, observation, action, reward, next_observation, terminated, truncated):
+        self.transitions.append((observation, action, reward, next_observation, terminated, truncated))
 
     def select_random_mini_batch(self):
 

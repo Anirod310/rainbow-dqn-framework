@@ -12,3 +12,6 @@ agent:
 
 replay_buffer:
   mini_batch_size: 32
+
+learning:
+  gamma: 0.99
