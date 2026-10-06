@@ -3,6 +3,8 @@ import ale_py
 from .preprocessors import AtariPreprocessor
 from .models.complete_model import CompleteModel
 from .agent.agent import Agent
+from.replay_buffer.replay_buffer import ReplayBuffer
+from .learning.learner import Learner
 
 
 class Factory():
@@ -11,6 +13,8 @@ class Factory():
         self.environment = None
         self.preprocessor = None
         self.model = None
+        self.agent = None
+        self.mini_batch = None
 
     def create_environment(self):
         gym.register_envs(ale_py)
@@ -41,6 +45,17 @@ class Factory():
                            self.config['agent']['epsilon'])
 
         return self.agent
+
+    def create_replay_buffer(self):
+        self.replay_buffer = ReplayBuffer(self.config)
+
+        return self.replay_buffer
+
+    def create_learner(self):
+        self.learner = Learner(self.agent, self.config)
+
+        return self.learner
+        
         
 
 
