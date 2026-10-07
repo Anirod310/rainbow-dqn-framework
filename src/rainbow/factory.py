@@ -42,7 +42,7 @@ class Factory():
     def create_agent(self):
         self.agent = Agent(self.model,
                            self.environment.action_space,
-                           self.config['agent']['epsilon'])
+                           self.config['agent']['epsilon_start'])
 
         return self.agent
 

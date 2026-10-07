@@ -8,7 +8,8 @@ preprocessing:
   target_image_size: [84, 84]
 
 agent:
-  epsilon: 1.0
+  epsilon_start: 1.0
+  epsilon_end: 0.01
 
 replay_buffer:
   memory_capacity: 1000000

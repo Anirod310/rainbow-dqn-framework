@@ -30,6 +30,9 @@ for episode in range(num_train_episodes):
     obs, info = env.reset()
     processed_obs = preprocessor.reset(obs)
 
+    if agent.epsilon > config['agent']['epsilon_end']:
+        agent.epsilon = config['agent']['epsilon_start'] - (config['agent']['epsilon_start']-config['agent']['epsilon_end']) * episode / num_train_episodes
+
     done = False
     episode_rewards = 0
 
