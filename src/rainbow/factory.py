@@ -5,11 +5,13 @@ from .models.complete_model import CompleteModel
 from .agent.agent import Agent
 from.replay_buffer.replay_buffer import ReplayBuffer
 from .learning.learner import Learner
+import torch
 
 
 class Factory():
     def __init__(self, config):
         self.config = config
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.environment = None
         self.preprocessor = None
         self.model = None
@@ -42,7 +44,9 @@ class Factory():
     def create_agent(self):
         self.agent = Agent(self.model,
                            self.environment.action_space,
-                           self.config['agent']['epsilon_start'])
+                           self.config['agent']['epsilon_start'],
+                           self.device)
+
 
         return self.agent
 
@@ -52,7 +56,7 @@ class Factory():
         return self.replay_buffer
 
     def create_learner(self):
-        self.learner = Learner(self.agent, self.config)
+        self.learner = Learner(self.agent, self.config, self.device)
 
         return self.learner
         

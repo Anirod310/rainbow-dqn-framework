@@ -1,8 +1,8 @@
 import torch
 
 class Learner():
-    def __init__(self, agent, config):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    def __init__(self, agent, config, device):
+        self.device = device
         self.config = config
         self.agent = agent
         self.agent.model.to(self.device)
