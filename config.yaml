@@ -18,4 +18,4 @@ learning:
   gamma: 0.99
 
 training:
-  episode: 800
+  num_episodes: 800
