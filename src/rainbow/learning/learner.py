@@ -6,7 +6,11 @@ class Learner():
         self.config = config
         self.agent = agent
         self.agent.model.to(self.device)
-        self.optimizer = torch.optim.RMSprop(agent.model.parameters())
+        self.optimizer = torch.optim.RMSprop(agent.model.parameters(), 
+                                             lr=config['learning']['learning_rate'], 
+                                             alpha=config['learning']['quared_gradient_momentum'], 
+                                             eps=config['learning']['min_squared_gradient'], 
+                                             momentum=config['learning']['gradient_momentum'], )
         self.loss = torch.nn.MSELoss()
 
     def learning_loop(self, mini_batch):

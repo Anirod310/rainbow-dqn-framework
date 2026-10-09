@@ -9,7 +9,7 @@ preprocessing:
 
 agent:
   epsilon_start: 1.0
-  epsilon_end: 0.01
+  epsilon_end: 0.1
 
 replay_buffer:
   memory_capacity: 1000000
@@ -17,6 +17,10 @@ replay_buffer:
 
 learning:
   gamma: 0.99
+  learning_rate: 0.00025
+  gradient_momentum: 0.95
+  squared_gradient_momentum: 0.95
+  min_squared_gradient: 0.01
 
 training:
   num_episodes: 800
