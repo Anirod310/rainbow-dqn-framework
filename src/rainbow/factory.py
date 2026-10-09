@@ -11,11 +11,17 @@ import torch
 class Factory():
     def __init__(self, config):
         self.config = config
+
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         self.environment = None
         self.preprocessor = None
-        self.model = None
+
+        self.online_model = self.model
+        self.target_model = self.model
+
         self.agent = None
+
         self.mini_batch = None
 
     def create_environment(self):
@@ -42,7 +48,7 @@ class Factory():
         return self.model
 
     def create_agent(self):
-        self.agent = Agent(self.model,
+        self.agent = Agent(self.online_model,
                            self.environment.action_space,
                            self.config['agent']['epsilon_start'],
                            self.device)

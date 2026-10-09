@@ -9,7 +9,8 @@ env = factory.create_environment()
 
 preprocessor = factory.create_preprocessor()
 
-model = factory.create_model()
+online_model = factory.create_model()
+target_model = factory.create_model()
 
 agent = factory.create_agent()
 

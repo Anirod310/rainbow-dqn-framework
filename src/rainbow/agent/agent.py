@@ -2,8 +2,8 @@ import torch
 import numpy as np
 
 class Agent():
-    def __init__(self, model, action_space, epsilon, device):
-        self.model = model
+    def __init__(self, online_model, action_space, epsilon, device):
+        self.online_model = online_model
         self.action_space = action_space
         self.epsilon = epsilon
         self.device = device
