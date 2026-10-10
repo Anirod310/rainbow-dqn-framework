@@ -21,6 +21,7 @@ learning:
   gradient_momentum: 0.95
   squared_gradient_momentum: 0.95
   min_squared_gradient: 0.01
+  target_network_update_freq: 10000
 
 training:
   num_episodes: 800

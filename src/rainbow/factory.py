@@ -17,8 +17,8 @@ class Factory():
         self.environment = None
         self.preprocessor = None
 
-        self.online_model = self.model
-        self.target_model = self.model
+        self.online_model = None
+        self.target_model = None
 
         self.agent = None
 
@@ -26,7 +26,7 @@ class Factory():
 
     def create_environment(self):
         gym.register_envs(ale_py)
-        self.environment = gym.make(self.config['environment']['name'])
+        self.environment = gym.make(self.config['environment']['name'], repeat_action_probability=0)
         return self.environment
 
     def create_preprocessor(self):
@@ -35,7 +35,7 @@ class Factory():
                                             target_image_size=self.config['preprocessing']['target_image_size'])
             return self.preprocessor
         
-    def create_model(self):
+    def create_online_model(self):
         input_dim = (
             self.preprocessor.frame_stack_size,
             *self.preprocessor.target_image_size
@@ -43,9 +43,22 @@ class Factory():
 
         output_dim = self.environment.action_space.n
 
-        self.model = CompleteModel(input_dim, output_dim)
+        self.online_model = CompleteModel(input_dim, output_dim)
 
-        return self.model
+        return self.online_model
+
+    def create_target_model(self):
+        input_dim = (
+            self.preprocessor.frame_stack_size,
+            *self.preprocessor.target_image_size
+        ) #To Solve : case when preprocessor is disabled
+
+        output_dim = self.environment.action_space.n
+
+        self.target_model = CompleteModel(input_dim, output_dim)
+        self.target_model.load_state_dict(self.online_model.state_dict())
+
+        return self.target_model
 
     def create_agent(self):
         self.agent = Agent(self.online_model,
@@ -62,7 +75,7 @@ class Factory():
         return self.replay_buffer
 
     def create_learner(self):
-        self.learner = Learner(self.agent, self.config, self.device)
+        self.learner = Learner(self.agent, self.target_model, self.config, self.device)
 
         return self.learner
         

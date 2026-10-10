@@ -4,22 +4,20 @@ from config import config
 factory = Factory(config)
 
 env = factory.create_environment()
-preprocessor = factory.create_preprocessor()
-model = factory.create_model()
 
+print(env)
+print("Environment spec:", env.spec)
+print("Frameskip:", env.unwrapped._frameskip)
 
 obs, info = env.reset()
 
-processed_obs = preprocessor.reset(obs)
+frames_before = env.unwrapped.ale.getEpisodeFrameNumber()
 
 action = env.action_space.sample()
+env.step(action)
 
-obs, reward, terminated, truncated, info = env.step(action)
+frames_after = env.unwrapped.ale.getEpisodeFrameNumber()
 
-processed_obs = preprocessor.process(obs)
+print("Frames advanced:", frames_after - frames_before)
 
-print(processed_obs.shape)
-print(processed_obs.dtype)
-print(processed_obs.min())
-print(processed_obs.max())
-print(model)
+

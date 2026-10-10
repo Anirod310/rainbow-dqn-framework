@@ -14,7 +14,7 @@ class Agent():
             action = np.random.randint(self.action_space.n)
         else:
             observation_tensor = torch.tensor(observation).unsqueeze(0).to(self.device)
-            q_values = self.model(observation_tensor)
+            q_values = self.online_model(observation_tensor)
             action = int(q_values.argmax())
         return action
         

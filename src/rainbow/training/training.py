@@ -9,8 +9,8 @@ env = factory.create_environment()
 
 preprocessor = factory.create_preprocessor()
 
-online_model = factory.create_model()
-target_model = factory.create_model()
+online_model = factory.create_online_model()
+target_model = factory.create_target_model()
 
 agent = factory.create_agent()
 
@@ -19,6 +19,9 @@ replay_buffer = factory.create_replay_buffer()
 learner = factory.create_learner()
 
 print(f"Using device: {learner.device}")
+
+online_weights = online_model.state_dict()
+target_weights = target_model.state_dict()
 
 #-------------------------------------------
 
