@@ -1,9 +1,8 @@
 import gymnasium as gym
 import ale_py
-from .preprocessors import AtariPreprocessor
 from .models.complete_model import CompleteModel
 from .agent.agent import Agent
-from.replay_buffer.replay_buffer import ReplayBuffer
+from .replay_buffer.replay_buffer import ReplayBuffer
 from .learning.learner import Learner
 import torch
 
@@ -26,20 +25,28 @@ class Factory():
 
     def create_environment(self):
         gym.register_envs(ale_py)
-        self.environment = gym.make(self.config['environment']['name'], repeat_action_probability=0)
+        self.environment = gym.make(self.config['environment']['name'], frameskip=self.config['environment']['frameskip_env'], repeat_action_probability = 0)
+        if self.config['preprocessing']['enabled'] and (self.config['preprocessing']['type'] == 'atari'):
+            self.environment = gym.wrappers.AtariPreprocessing(self.environment,
+                                                        frame_skip=self.config['environment']['frameskip_wrap'],
+                                                        screen_size=tuple(self.config['preprocessing']['image_size']),
+                                                        scale_obs=True)
+            self.environment = gym.wrappers.FrameStackObservation(self.environment, stack_size=self.config['preprocessing']['frame_stack_size'])
         return self.environment
 
     def create_preprocessor(self):
         if self.config['preprocessing']['enabled']:
-            self.preprocessor = AtariPreprocessor(frame_stack_size=self.config['preprocessing']['frame_stack_size'], 
+            ...#Not used anymore since we use gym wrappers
+            '''self.preprocessor = AtariPreprocessor(frame_stack_size=self.config['preprocessing']['frame_stack_size'], 
                                             target_image_size=self.config['preprocessing']['target_image_size'])
+            '''
             return self.preprocessor
         
     def create_online_model(self):
         input_dim = (
-            self.preprocessor.frame_stack_size,
-            *self.preprocessor.target_image_size
-        ) #To Solve : case when preprocessor is disabled
+            self.config['preprocessing']['frame_stack_size'],
+            *self.config['preprocessing']['image_size'])
+            #To Solve : case when preprocessor is disabled
 
         output_dim = self.environment.action_space.n
 
@@ -49,9 +56,9 @@ class Factory():
 
     def create_target_model(self):
         input_dim = (
-            self.preprocessor.frame_stack_size,
-            *self.preprocessor.target_image_size
-        ) #To Solve : case when preprocessor is disabled
+            self.config['preprocessing']['frame_stack_size'],
+            *self.config['preprocessing']['image_size'])
+         #To Solve : case when preprocessor is disabled
 
         output_dim = self.environment.action_space.n
 

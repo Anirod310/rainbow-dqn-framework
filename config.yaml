@@ -1,11 +1,13 @@
 environment:
   name: ALE/Breakout-v5
+  frameskip_env: 1
+  frameskip_wrap: 4
 
 preprocessing:
   enabled: true
   type: atari
   frame_stack_size: 4
-  target_image_size: [84, 84]
+  image_size: [84, 84]
 
 agent:
   epsilon_start: 1.0

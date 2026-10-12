@@ -7,8 +7,6 @@ factory = Factory(config)
 
 env = factory.create_environment()
 
-preprocessor = factory.create_preprocessor()
-
 online_model = factory.create_online_model()
 target_model = factory.create_target_model()
 
@@ -20,8 +18,6 @@ learner = factory.create_learner()
 
 print(f"Using device: {learner.device}")
 
-online_weights = online_model.state_dict()
-target_weights = target_model.state_dict()
 
 #-------------------------------------------
 
@@ -32,7 +28,6 @@ average_reward = 0
 for episode in range(num_train_episodes):
 
     obs, info = env.reset()
-    processed_obs = preprocessor.reset(obs)
 
     if agent.epsilon > config['agent']['epsilon_end']:
         agent.epsilon = config['agent']['epsilon_start'] - (config['agent']['epsilon_start']-config['agent']['epsilon_end']) * episode / num_train_episodes
@@ -42,19 +37,18 @@ for episode in range(num_train_episodes):
 
     while(not done):
 
-        action = agent.select_action(processed_obs)
+        action = agent.select_action(obs)
 
         next_obs, reward, terminated, truncated, info = env.step(action)
-        processed_next_obs = preprocessor.process(next_obs)
 
         episode_rewards += reward
         
         if terminated or truncated:
             done = True
 
-        replay_buffer.store_transition(processed_obs, action, reward, processed_next_obs, terminated, truncated)
+        replay_buffer.store_transition(obs, action, reward, next_obs, terminated, truncated)
 
-        processed_obs = processed_next_obs
+        obs = next_obs
 
         if len(replay_buffer.memory)>=config['replay_buffer']['mini_batch_size']:
             mini_batch = replay_buffer.select_random_mini_batch()

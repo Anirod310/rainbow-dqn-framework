@@ -18,6 +18,8 @@ env.step(action)
 
 frames_after = env.unwrapped.ale.getEpisodeFrameNumber()
 
+print(obs.shape)
+print(obs.dtype)
 print("Frames advanced:", frames_after - frames_before)
 
 

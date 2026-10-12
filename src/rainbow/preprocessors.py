@@ -2,6 +2,10 @@ import numpy as np
 import cv2
 from collections import deque
 
+
+
+#Unused since we now use the gym Atari wrappers (I just realized it was given, oops...)
+'''
 class AtariPreprocessor():
     def __init__(self, frame_stack_size, target_image_size):
         self.frame_stack_size = frame_stack_size
@@ -34,4 +38,4 @@ class AtariPreprocessor():
         self.deque_frames.append(resized_observation)
 
         return np.stack(self.deque_frames)
-
+'''
