@@ -1,25 +1,35 @@
 from rainbow.factory import Factory
 from config import config
+import torch
 
+# Create the environment and models
 factory = Factory(config)
 
 env = factory.create_environment()
+online_model = factory.create_online_model()
+target_model = factory.create_target_model()
 
-print(env)
-print("Environment spec:", env.spec)
-print("Frameskip:", env.unwrapped._frameskip)
+# Initialize LazyLinear layers
+dummy_tensor = torch.randn(1, 4, 84, 84)
 
-obs, info = env.reset()
+online_model(dummy_tensor)
+target_model(dummy_tensor)
 
-frames_before = env.unwrapped.ale.getEpisodeFrameNumber()
+# Copy online weights to target
+target_model.load_state_dict(online_model.state_dict())
 
-action = env.action_space.sample()
-env.step(action)
+# Test parameter equality
+all_equal = True
 
-frames_after = env.unwrapped.ale.getEpisodeFrameNumber()
+for (online_name, online_param), (target_name, target_param) in zip(
+    online_model.named_parameters(),
+    target_model.named_parameters()
+):
+    equal = torch.equal(online_param, target_param)
 
-print(obs.shape)
-print(obs.dtype)
-print("Frames advanced:", frames_after - frames_before)
+    print(f"{online_name}: {'PASS' if equal else 'FAIL'}")
 
+    if not equal:
+        all_equal = False
 
+print("\nAll parameters identical:", all_equal)
