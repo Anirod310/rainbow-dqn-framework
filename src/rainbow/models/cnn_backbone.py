@@ -13,7 +13,8 @@ class CNNBackbone(BaseModel):
                               nn.Conv2d(64, 64, kernel_size=(3,3), stride=1),
                               nn.ReLU(),
                               nn.Flatten(),
-                              nn.LazyLinear(self.output_dim)
+                              nn.LazyLinear(self.output_dim),
+                              nn.ReLU()
                             )
 
     def forward(self, x):

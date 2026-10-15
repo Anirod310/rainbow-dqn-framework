@@ -10,4 +10,3 @@ class QValueHead(BaseModel):
 
     def forward(self, x):
         return self.model(x)
-
