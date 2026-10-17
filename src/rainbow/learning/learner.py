@@ -26,7 +26,7 @@ class Learner():
 
         with torch.no_grad():
             target_values = torch.tensor([transition[2] + self.config["learning"]["gamma"] * (torch.max(self.target_model(torch.tensor(transition[3], dtype=torch.float32).unsqueeze(0).to(self.device)))
-                        if not (transition[4] or transition[5]) else 0) for transition in mini_batch], dtype=torch.float32).to(self.device)
+                        if not transition[4] else 0) for transition in mini_batch], dtype=torch.float32).to(self.device)
 
         loss = self.loss(chosen_q_values, target_values)
 

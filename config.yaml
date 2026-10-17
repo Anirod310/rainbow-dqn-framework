@@ -12,6 +12,7 @@ preprocessing:
 agent:
   epsilon_start: 1.0
   epsilon_end: 0.1
+  annealing_duration: 1000000
 
 replay_buffer:
   memory_capacity: 1000000

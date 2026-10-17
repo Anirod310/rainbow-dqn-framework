@@ -1,6 +1,7 @@
 from config import config
 from ..factory import Factory
 import torch
+import numpy as np
 
 #----------Object construction part---------
 
@@ -33,12 +34,11 @@ num_train_episodes = config['training']['num_episodes']
 
 average_reward = 0
 
+frame_count = 0
+
 for episode in range(num_train_episodes):
 
     obs, info = env.reset()
-
-    if agent.epsilon > config['agent']['epsilon_end']:
-        agent.epsilon = config['agent']['epsilon_start'] - (config['agent']['epsilon_start']-config['agent']['epsilon_end']) * episode / num_train_episodes
 
     done = False
     episode_rewards = 0
@@ -48,17 +48,19 @@ for episode in range(num_train_episodes):
         action = agent.select_action(obs)
 
         next_obs, reward, terminated, truncated, info = env.step(action)
+        frame_count += 4 #Because each step takes 4 frames 
+        agent.epsilon = max(config['agent']['epsilon_end'], config['agent']['epsilon_start']-frame_count/config['agent']['annealing_duration']*(config['agent']['epsilon_start'] -config['agent']['epsilon_end']))
 
         episode_rewards += reward
         
         if terminated or truncated:
             done = True
 
-        replay_buffer.store_transition(obs, action, reward, next_obs, terminated, truncated)
+        replay_buffer.store_transition(obs, action, np.sign(reward), next_obs, terminated, truncated)
 
         obs = next_obs
 
-        if len(replay_buffer.memory)>=config['replay_buffer']['mini_batch_size']:
+        if len(replay_buffer.memory) >= 50000:
             mini_batch = replay_buffer.select_random_mini_batch()
             learner.learning_loop(mini_batch)
 
@@ -66,7 +68,7 @@ for episode in range(num_train_episodes):
 
     if (episode%100) == 0:
         average_reward = average_reward / 100
-        print(f"Episode : {episode} | Episode Rewards : {episode_rewards} | Average Reward over last 100 episodes : {average_reward}\n")
+        print(f"Episode : {episode} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last 100 episodes : {average_reward}\n")
         average_reward = 0
 
 
