@@ -61,8 +61,8 @@ for episode in range(num_train_episodes):
         obs = next_obs
 
         if len(replay_buffer.memory) >= 50000:
-            mini_batch = replay_buffer.select_random_mini_batch()
-            learner.learning_loop(mini_batch)
+            mini_batch, obs_stacked, next_obs_stacked = replay_buffer.select_random_mini_batch()
+            learner.learning_loop(obs_stacked, next_obs_stacked)
 
     average_reward += episode_rewards
 

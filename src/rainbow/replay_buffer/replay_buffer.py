@@ -21,11 +21,7 @@ class ReplayBuffer():
         if len(self.memory) < self.mini_batch_size:
             return 
         else:
-            indices = np.random.choice(
-                len(self.memory),
-                size=self.mini_batch_size,
-                replace=False
-            )
+            indices = np.random.randint(0, len(self.memory), size=self.mini_batch_size)
 
             mini_batch = []
 
@@ -33,7 +29,18 @@ class ReplayBuffer():
                 transition = self.memory[index]
                 mini_batch.append(transition)
 
-            return mini_batch
+            observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = zip(*mini_batch)
+
+            observation_batch = np.stack(observation_batch)
+            next_observation_batch = np.stack(next_observation_batch)
+
+            #To convert them from tuples to arrays
+            action_batch = np.asarray(action_batch) 
+            reward_batch = np.asarray(reward_batch)
+            terminated_batch = np.asarray(terminated_batch)
+            truncated_batch = np.asarray(truncated_batch)
+
+            return observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch
 
 
     

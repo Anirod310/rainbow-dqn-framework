@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 class Learner():
     def __init__(self, agent, target_model, config, device):
@@ -15,18 +16,29 @@ class Learner():
                                              lr=config['learning']['learning_rate'], 
                                              alpha=config['learning']['squared_gradient_momentum'], 
                                              eps=config['learning']['min_squared_gradient'], 
-                                             momentum=config['learning']['gradient_momentum'], )
+                                             momentum=config['learning']['gradient_momentum'],
+                                             centered=True )
         self.loss = torch.nn.HuberLoss() #Not exactly the same loss as the paper's one but still rlly good 
         self.target_update_cpt = 0
 
-    def learning_loop(self, mini_batch):
-        q_values = [self.agent.online_model(torch.tensor(transition[0], dtype=torch.float32).unsqueeze(0).to(self.device)) for transition in mini_batch]
+    def learning_loop(self, observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch):
 
-        chosen_q_values = torch.stack([q_value[0, transition[1]] for q_value, transition in zip(q_values, mini_batch)])
+        q_values = self.agent.online_model(torch.tensor(observation_batch, dtype=torch.float32).to(self.device))
+
+        chosen_q_values = q_values[ #Create a tensor with only the 32 chosen q value so we go from (32, 4) to (32, )
+            torch.arange(len(action_batch), device=self.device),
+            torch.tensor(action_batch, dtype=torch.long, device=self.device)
+        ]
 
         with torch.no_grad():
-            target_values = torch.tensor([transition[2] + self.config["learning"]["gamma"] * (torch.max(self.target_model(torch.tensor(transition[3], dtype=torch.float32).unsqueeze(0).to(self.device)))
-                        if not transition[4] else 0) for transition in mini_batch], dtype=torch.float32).to(self.device)
+
+            terminated_tensor_mask = torch.logical_not(torch.tensor(terminated_batch, dtype=torch.bool).to(self.device)).float()
+
+            tensor_reward_batch = torch.tensor(reward_batch, dtype=torch.float32).to(self.device)
+            tensor_next_observation_batch = torch.tensor(next_observation_batch, dtype=torch.float32).to(self.device)
+
+            target_values = tensor_reward_batch + self.config["learning"]["gamma"] * (torch.max(self.target_model(tensor_next_observation_batch), dim=1).values) * terminated_tensor_mask
+                                          
 
         loss = self.loss(chosen_q_values, target_values)
 
