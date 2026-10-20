@@ -6,6 +6,8 @@ import torch
 factory = Factory(config)
 
 env = factory.create_environment()
+
+#----------------Models Creation Tests----------------#
 online_model = factory.create_online_model()
 target_model = factory.create_target_model()
 
@@ -33,3 +35,17 @@ for (online_name, online_param), (target_name, target_param) in zip(
         all_equal = False
 
 print("\nAll parameters identical:", all_equal)
+#------------------------------------------------------#
+
+#----------------------Wrapper Tests-------------------#
+
+obs, infos = env.reset()
+print(obs.shape)
+print(obs.dtype)
+print(obs.min(), obs.max())
+
+
+
+
+
+

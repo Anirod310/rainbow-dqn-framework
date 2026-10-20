@@ -23,6 +23,18 @@ class Learner():
 
     def learning_loop(self, observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch):
 
+        observation_batch = observation_batch.astype(np.float32) / 255
+        next_observation_batch = next_observation_batch.astype(np.float32) / 255
+
+        #----------Shape Tests------------#
+        '''print("Observation batch:", observation_batch.shape, observation_batch.dtype,
+            observation_batch.min(), observation_batch.max())
+
+        print("Next observation batch:", next_observation_batch.shape,
+            next_observation_batch.dtype, next_observation_batch.min(),
+            next_observation_batch.max()) '''
+        #---------------------------------#
+
         q_values = self.agent.online_model(torch.tensor(observation_batch, dtype=torch.float32).to(self.device))
 
         chosen_q_values = q_values[ #Create a tensor with only the 32 chosen q value so we go from (32, 4) to (32, )
@@ -50,6 +62,8 @@ class Learner():
         if self.target_update_cpt == self.config['learning']['target_network_update_freq']:
             self.update_target_model()
             self.target_update_cpt = 0
+
+        return loss
 
     def update_target_model(self):
         self.target_model.load_state_dict(self.agent.online_model.state_dict())

@@ -13,7 +13,9 @@ class Agent():
         if(np.random.rand() < self.epsilon):
             action = np.random.randint(self.action_space.n)
         else:
-            observation_tensor = torch.tensor(observation).unsqueeze(0).to(self.device)
+            observation_tensor = torch.tensor(
+                    observation, dtype=torch.float32
+                ).unsqueeze(0).to(self.device) / 255.0
             q_values = self.online_model(observation_tensor)
             action = int(q_values.argmax())
         return action

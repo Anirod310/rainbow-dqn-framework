@@ -30,7 +30,8 @@ class Factory():
             self.environment = gym.wrappers.AtariPreprocessing(self.environment,
                                                         frame_skip=self.config['environment']['frameskip_wrap'],
                                                         screen_size=tuple(self.config['preprocessing']['image_size']),
-                                                        scale_obs=True)
+                                                        grayscale_obs=True,
+                                                        scale_obs=False)
             self.environment = gym.wrappers.FrameStackObservation(self.environment, stack_size=self.config['preprocessing']['frame_stack_size'])
         return self.environment
 

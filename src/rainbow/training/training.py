@@ -36,6 +36,8 @@ average_reward = 0
 
 frame_count = 0
 
+loss = 0
+
 for episode in range(num_train_episodes):
 
     obs, info = env.reset()
@@ -62,13 +64,13 @@ for episode in range(num_train_episodes):
 
         if len(replay_buffer.memory) >= 50000:
             observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
-            learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
+            loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 
     average_reward += episode_rewards
 
     if (episode%100) == 0:
         average_reward = average_reward / 100
-        print(f"Episode : {episode} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last 100 episodes : {average_reward}\n")
+        print(f"Episode : {episode} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last 100 episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}\n")
         average_reward = 0
 
 
