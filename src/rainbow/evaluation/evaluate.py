@@ -15,6 +15,7 @@ online_model.eval()
 agent = factory.create_agent()
 agent.epsilon = 0
 print(f"Using device: {agent.device}")
+online_model.to(agent.device)
 
 #-------------------------------------------
 
@@ -52,5 +53,5 @@ with torch.no_grad():
             print(f"Episode : {episode+1} | Episode Reward : {episode_rewards} | Average reward over last 5 episodes : {average_rewards}")
             average_rewards = 0
 
-
+    env.close()
 

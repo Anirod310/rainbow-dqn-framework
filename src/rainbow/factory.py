@@ -25,7 +25,7 @@ class Factory():
 
     def create_environment(self):
         gym.register_envs(ale_py)
-        self.environment = gym.make(self.config['environment']['name'], frameskip=self.config['environment']['frameskip_env'], repeat_action_probability = 0)
+        self.environment = gym.make(self.config['environment']['name'], frameskip=self.config['environment']['frameskip_env'], repeat_action_probability = 0, render_mode="human")
         if self.config['preprocessing']['enabled'] and (self.config['preprocessing']['type'] == 'atari'):
             self.environment = gym.wrappers.AtariPreprocessing(self.environment,
                                                         frame_skip=self.config['environment']['frameskip_wrap'],
