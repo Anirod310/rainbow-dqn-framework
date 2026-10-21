@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Chekpoints folder containing weights for training and evaluation
+checkpoints/
