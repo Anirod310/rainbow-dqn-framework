@@ -40,16 +40,16 @@ loss = 0
 
 for episode in range(num_train_episodes):
 
-    obs, info = env.reset()
+    observation, info = env.reset()
 
     done = False
     episode_rewards = 0
 
     while(not done):
 
-        action = agent.select_action(obs)
+        action = agent.select_action(observation)
 
-        next_obs, reward, terminated, truncated, info = env.step(action)
+        next_observation, reward, terminated, truncated, info = env.step(action)
         frame_count += 4 #Because each step takes 4 frames 
         agent.epsilon = max(config['agent']['epsilon_end'], config['agent']['epsilon_start']-frame_count/config['agent']['annealing_duration']*(config['agent']['epsilon_start'] -config['agent']['epsilon_end']))
 
@@ -58,9 +58,9 @@ for episode in range(num_train_episodes):
         if terminated or truncated:
             done = True
 
-        replay_buffer.store_transition(obs, action, np.sign(reward), next_obs, terminated, truncated)
+        replay_buffer.store_transition(observation, action, np.sign(reward), next_observation, terminated, truncated)
 
-        obs = next_obs
+        observation = next_observation
 
         if len(replay_buffer.memory) >= 50000:
             observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
@@ -68,10 +68,14 @@ for episode in range(num_train_episodes):
 
     average_reward += episode_rewards
 
-    if (episode%100) == 0:
-        average_reward = average_reward / 100
-        print(f"Episode : {episode} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last 100 episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}\n")
+    if (episode + 1) % 1000 == 0:
+        average_reward = average_reward / 1000
+        print(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last 1000 episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}\n")
         average_reward = 0
+        torch.save(online_model.state_dict(), config['evaluate']['weights_path'])
+
+
+torch.save(online_model.state_dict(), config['evaluate']['weights_path'])
 
 
 

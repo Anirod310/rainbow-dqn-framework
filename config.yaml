@@ -31,4 +31,4 @@ training:
 
 evaluate:
   num_episodes: 10
-  weights_path: checkpoints/baseline/online_model.pth
+  weights_path: checkpoints/baseline/latest.pth
