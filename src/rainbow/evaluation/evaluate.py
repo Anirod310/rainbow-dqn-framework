@@ -7,6 +7,8 @@ import torch
 factory = Factory(config)
 
 env = factory.create_environment()
+if config['environment']['wrappers']['fire_reset']['enabled']:
+    env = factory.create_fire_reset_wrapper()
 
 online_model = factory.create_online_model()
 online_model.load_state_dict(torch.load(config['evaluate']['weights_path']))

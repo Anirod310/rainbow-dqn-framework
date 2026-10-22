@@ -2,6 +2,9 @@ environment:
   name: ALE/Breakout-v5
   frameskip_env: 1
   frameskip_wrap: 4
+  wrappers:
+    fire_reset:
+      enabled: true
 
 preprocessing:
   enabled: true

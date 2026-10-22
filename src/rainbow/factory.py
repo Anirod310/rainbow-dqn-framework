@@ -4,6 +4,7 @@ from .models.complete_model import CompleteModel
 from .agent.agent import Agent
 from .replay_buffer.replay_buffer import ReplayBuffer
 from .learning.learner import Learner
+from.environment.wrappers.fire_reset import FireResetWrapper
 import torch
 
 
@@ -34,6 +35,10 @@ class Factory():
                                                         scale_obs=False)
             self.environment = gym.wrappers.FrameStackObservation(self.environment, stack_size=self.config['preprocessing']['frame_stack_size'])
         return self.environment
+
+    def create_fire_reset_wrapper(self):
+        fire_reset_wrapper = FireResetWrapper(self.environment)
+        return fire_reset_wrapper
 
     def create_preprocessor(self):
         if self.config['preprocessing']['enabled']:

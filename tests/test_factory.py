@@ -40,6 +40,7 @@ print("\nAll parameters identical:", all_equal)
 #----------------------Wrapper Tests-------------------#
 
 obs, infos = env.reset()
+print(infos["lives"])
 print(obs.shape)
 print(obs.dtype)
 print(obs.min(), obs.max())

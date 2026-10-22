@@ -8,6 +8,8 @@ import numpy as np
 factory = Factory(config)
 
 env = factory.create_environment()
+if config['environment']['wrappers']['fire_reset']['enabled']:
+    env = factory.create_fire_reset_wrapper()
 
 online_model = factory.create_online_model()
 target_model = factory.create_target_model()
@@ -51,7 +53,7 @@ for episode in range(num_train_episodes):
 
         next_observation, reward, terminated, truncated, info = env.step(action)
         frame_count += 4 #Because each step takes 4 frames 
-        agent.epsilon = max(config['agent']['epsilon_end'], config['agent']['epsilon_start']-frame_count/config['agent']['annealing_duration']*(config['agent']['epsilon_start'] -config['agent']['epsilon_end']))
+        agent.epsilon = max(config['agent']['epsilon_end'], config['agent']['epsilon_start']-frame_count/config['agent']['annealing_duration']*(config['agent']['epsilon_start'] - config['agent']['epsilon_end']))
 
         episode_rewards += reward
         
