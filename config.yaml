@@ -1,11 +1,14 @@
 environment:
+  type: atari
   name: ALE/Breakout-v5
   frameskip_env: 1
   frameskip_wrap: 4
   render_mode: null
+
   wrappers:
     fire_reset:
       enabled: true
+
   random_seed: 42
 
 preprocessing:

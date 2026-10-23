@@ -17,7 +17,11 @@ if config['environment']['wrappers']['fire_reset']['enabled']:
 online_model = factory.create_online_model()
 target_model = factory.create_target_model()
 
-dummy_tensor = torch.randn(1, 4, 84, 84)#to initialize the model's weights since we use Lazy Linear | Not on device since models are put on device in the learner
+dummy_tensor = torch.randn(
+    1,
+    config['preprocessing']['frame_stack_size'],
+    *config['preprocessing']['image_size']
+)#to initialize the model's weights since we use Lazy Linear | Not on device since models are put on device in the learner
 
 online_model(dummy_tensor)
 target_model(dummy_tensor)
@@ -89,7 +93,7 @@ for episode in range(num_train_episodes):
     if (episode + 1) % print_interval == 0:
         average_reward = average_reward / print_interval
         print(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
-        print(f"Training times : {hours}h {minutes}m {seconds}s\n")
+        print(f"Training time : {hours}h {minutes}m {seconds}s\n")
         if(episode+1) != num_train_episodes:
             average_reward = 0
 

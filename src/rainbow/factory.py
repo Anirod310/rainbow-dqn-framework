@@ -52,6 +52,11 @@ class Factory():
             self.environment = gym.wrappers.FrameStackObservation(self.environment, stack_size=self.config['preprocessing']['frame_stack_size'])
         return self.environment
 
+    def create_manual_play_environment(self):
+        gym.register_envs(ale_py)
+        self.environment = gym.make(self.config['environment']['name'], obs_type="rgb", repeat_action_probability=0.0, render_mode="rgb_array")
+        return self.environment
+
     def create_fire_reset_wrapper(self):
         fire_reset_wrapper = FireResetWrapper(self.environment)
         return fire_reset_wrapper
@@ -85,7 +90,6 @@ class Factory():
         output_dim = self.environment.action_space.n
 
         self.target_model = CompleteModel(input_dim, output_dim)
-        self.target_model.load_state_dict(self.online_model.state_dict())
 
         return self.target_model
 
