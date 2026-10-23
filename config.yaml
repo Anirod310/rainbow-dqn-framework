@@ -32,8 +32,8 @@ learning:
   target_network_update_freq: 10000
 
 training:
-  num_episodes: 10000
+  num_episodes: 30000
 
 evaluate:
   num_episodes: 30
-  checkpoint_path: checkpoints/baseline/latest_seed42_buffer300k.pth
+  checkpoint_path: checkpoints/baseline/latest_seed42_buffer300k_30kEps.pth

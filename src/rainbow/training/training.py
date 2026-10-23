@@ -38,6 +38,7 @@ print(f"Using device: {learner.device}")
 num_train_episodes = config['training']['num_episodes']
 average_reward = 0
 frame_count = 0
+step_count = 0
 loss = 0
 
 print_interval = max(1, num_train_episodes // 5)
@@ -73,7 +74,8 @@ for episode in range(num_train_episodes):
 
         observation = next_observation
 
-        if len(replay_buffer.memory) >= 50000 and frame_count % 16 == 0:
+        step_count += 1
+        if len(replay_buffer.memory) >= 50000 and step_count % 4 == 0:
             observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
             loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 

@@ -33,6 +33,8 @@ num_eval_episodes = config['evaluate']['num_episodes']
 
 average_rewards = 0
 
+print(f"Configuration : seed : {checkpoint['seed']} | Last average training reward : {checkpoint['last_interval_training_episode_average_reward']} | Final number of frames for the whole training : {checkpoint['emulator_frames']}\n")
+
 with torch.no_grad():
 
     for episode in range(num_eval_episodes):
@@ -66,7 +68,6 @@ with torch.no_grad():
     checkpoint["evaluation_mean_reward"] = average_rewards
     torch.save(checkpoint, config['evaluate']['checkpoint_path'])
 
-    print(f"Configuration : seed : {checkpoint['seed']} | Last average training reward : {checkpoint['last_interval_training_episode_average_reward']} | Final number of frames for the whole training : {checkpoint['emulator_frames']}\n")
     print(f"Average Evaluation reward : {checkpoint['evaluation_mean_reward']}")
     average_rewards = 0
 
