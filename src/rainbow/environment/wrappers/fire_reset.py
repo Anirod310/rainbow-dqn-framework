@@ -16,8 +16,11 @@ class FireResetWrapper(gym.Wrapper):
 
         next_observation, reward, terminated, truncated, info = self.env.step(action)
 
-        if(info["lives"] < self.lives and (not (terminated or truncated))):
+        life_lost = info["lives"] < self.lives
+
+        if(life_lost and (not (terminated or truncated))):
             next_observation, fire_reward, terminated, truncated, info = self.env.step(1)
 
         self.lives = info["lives"]
+        info["life_lost"] = life_lost
         return next_observation, reward, terminated, truncated, info

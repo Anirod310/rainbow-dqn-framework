@@ -67,11 +67,13 @@ for episode in range(num_train_episodes):
         if terminated or truncated:
             done = True
 
-        replay_buffer.store_transition(observation, action, np.sign(reward), next_observation, terminated, truncated)
+        life_lost = info.get("life_lost", False)#Like this if we disable fire_reset it will just count on terminated
+
+        replay_buffer.store_transition(observation, action, np.sign(reward), next_observation, terminated or life_lost, truncated)#We store life_lost as the end of a session in the learning so the agent understands that loosing a life isnt good
 
         observation = next_observation
 
-        if len(replay_buffer.memory) >= 50000:
+        if len(replay_buffer.memory) >= 50000 and frame_count % 16 == 0:
             observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
             loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 

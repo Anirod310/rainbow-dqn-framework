@@ -20,7 +20,7 @@ agent:
   annealing_duration: 1000000
 
 replay_buffer:
-  memory_capacity: 300000 #For the moment only 100k since 1M would use 53GiB (100k uses 4GiB)
+  memory_capacity: 300000
   mini_batch_size: 32
 
 learning:
