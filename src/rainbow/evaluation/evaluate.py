@@ -6,12 +6,19 @@ import torch
 
 factory = Factory(config)
 
+seed = factory.set_random_seed()
+
 env = factory.create_environment()
 if config['environment']['wrappers']['fire_reset']['enabled']:
     env = factory.create_fire_reset_wrapper()
 
+
+checkpoint = torch.load(config['evaluate']['checkpoint_path'],
+                        weights_only=True)
+
+
 online_model = factory.create_online_model()
-online_model.load_state_dict(torch.load(config['evaluate']['weights_path']))
+online_model.load_state_dict(checkpoint["model_state_dict"])
 online_model.eval()
 
 agent = factory.create_agent()
@@ -30,7 +37,11 @@ with torch.no_grad():
 
     for episode in range(num_eval_episodes):
 
-        observation, infos = env.reset()
+        if episode == 0:
+            observation, info = env.reset(seed=seed)
+        else:
+            observation, info = env.reset()
+
         done = False
         episode_rewards = 0
 
@@ -49,11 +60,15 @@ with torch.no_grad():
             observation = next_observation
 
         average_rewards += episode_rewards
+        
+    average_rewards = average_rewards / num_eval_episodes
 
-        if (episode + 1) % 5 == 0:
-            average_rewards = average_rewards / 5
-            print(f"Episode : {episode+1} | Episode Reward : {episode_rewards} | Average reward over last 5 episodes : {average_rewards}")
-            average_rewards = 0
+    checkpoint["evaluation_mean_reward"] = average_rewards
+    torch.save(checkpoint, config['evaluate']['checkpoint_path'])
+
+    print(f"Configuration : seed : {checkpoint['seed']} | Last average training reward : {checkpoint['last_interval_training_episode_average_reward']} | Final number of frames for the whole training : {checkpoint['emulator_frames']}\n")
+    print(f"Average Evaluation reward : {checkpoint['evaluation_mean_reward']}")
+    average_rewards = 0
 
     env.close()
 

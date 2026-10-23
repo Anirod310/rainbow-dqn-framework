@@ -2,10 +2,13 @@ from config import config
 from ..factory import Factory
 import torch
 import numpy as np
+import time
 
 #----------Object construction part---------
 
 factory = Factory(config)
+
+seed = factory.set_random_seed()
 
 env = factory.create_environment()
 if config['environment']['wrappers']['fire_reset']['enabled']:
@@ -33,16 +36,20 @@ print(f"Using device: {learner.device}")
 #----------------Training loop---------------------------
 
 num_train_episodes = config['training']['num_episodes']
-
 average_reward = 0
-
 frame_count = 0
-
 loss = 0
+
+print_interval = max(1, num_train_episodes // 5)
+
+start_time = time.perf_counter()
 
 for episode in range(num_train_episodes):
 
-    observation, info = env.reset()
+    if episode == 0:
+        observation, info = env.reset(seed=seed)
+    else:
+        observation, info = env.reset()
 
     done = False
     episode_rewards = 0
@@ -70,14 +77,31 @@ for episode in range(num_train_episodes):
 
     average_reward += episode_rewards
 
-    if (episode + 1) % 1000 == 0:
-        average_reward = average_reward / 1000
-        print(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last 1000 episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}\n")
-        average_reward = 0
-        torch.save(online_model.state_dict(), config['evaluate']['weights_path'])
+    elapsed_time = time.perf_counter() - start_time
+    hours = int(elapsed_time // 3600)
+    minutes = int((elapsed_time % 3600) // 60)
+    seconds = int(elapsed_time % 60)
 
+    if (episode + 1) % print_interval == 0:
+        average_reward = average_reward / print_interval
+        print(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
+        print(f"Training times : {hours}h {minutes}m {seconds}s\n")
+        if(episode+1) != num_train_episodes:
+            average_reward = 0
 
-torch.save(online_model.state_dict(), config['evaluate']['weights_path'])
+evaluation_mean_reward = 0#Only available after an evaluate session
+checkpoint = {
+    "model_state_dict": online_model.state_dict(),
+    "seed": seed,
+    "episodes": num_train_episodes,
+    "emulator_frames": frame_count,
+    "last_interval_training_episode_average_reward": average_reward,
+    "evaluation_mean_reward": evaluation_mean_reward,
+    "training_duration_seconds": elapsed_time,
+    "config":config
+}
+
+torch.save(checkpoint, config['evaluate']['checkpoint_path'])
 
 
 

@@ -6,6 +6,8 @@ from .replay_buffer.replay_buffer import ReplayBuffer
 from .learning.learner import Learner
 from.environment.wrappers.fire_reset import FireResetWrapper
 import torch
+import random
+import numpy as np
 
 
 class Factory():
@@ -23,6 +25,20 @@ class Factory():
         self.agent = None
 
         self.mini_batch = None
+
+    def set_random_seed(self):
+        seed = self.config['environment']['random_seed']
+
+        random.seed(seed)
+
+        np.random.seed(seed)
+
+        torch.manual_seed(seed)
+
+        torch.cuda.manual_seed_all(seed)
+
+        return seed 
+
 
     def create_environment(self):
         gym.register_envs(ale_py)

@@ -6,6 +6,7 @@ environment:
   wrappers:
     fire_reset:
       enabled: true
+  random_seed: 42
 
 preprocessing:
   enabled: true
@@ -19,7 +20,7 @@ agent:
   annealing_duration: 1000000
 
 replay_buffer:
-  memory_capacity: 100000 #For the moment only 100k since 1M would use 53GiB (100k uses 4GiB)
+  memory_capacity: 300000 #For the moment only 100k since 1M would use 53GiB (100k uses 4GiB)
   mini_batch_size: 32
 
 learning:
@@ -31,8 +32,8 @@ learning:
   target_network_update_freq: 10000
 
 training:
-  num_episodes: 5000
+  num_episodes: 10000
 
 evaluate:
-  num_episodes: 10
-  weights_path: checkpoints/baseline/latest.pth
+  num_episodes: 30
+  checkpoint_path: checkpoints/baseline/latest_seed42_buffer300k.pth
