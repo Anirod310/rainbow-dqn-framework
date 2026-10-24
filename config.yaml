@@ -41,4 +41,4 @@ training:
 
 evaluate:
   num_episodes: 30
-  checkpoint_path: checkpoints/baseline/latest_seed42_buffer500k_20kEps.pth
+  checkpoint_path: checkpoints/baseline/latest_seed42_buffer500k_15kEps.pth
