@@ -101,9 +101,12 @@ try:
         if (episode + 1) % print_interval == 0:
             average_reward = average_reward / print_interval
             print(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
-            print(f"Training time : {hours}h {minutes}m {seconds}s\n")
+            print(f"Training time : {hours}h {minutes}m {seconds}s")
 
             if average_reward >  best_average_reward:
+
+                print("best average reward reached !")
+
                 save_checkpoint(online_model=online_model,
                         seed=seed,
                         episodes=num_train_episodes,
@@ -111,8 +114,6 @@ try:
                         average_reward=average_reward,
                         start_time=start_time,
                         config=config)
-
-                print("best average reward reached ! checkpoint saved")
 
                 best_average_reward = average_reward
 
@@ -127,7 +128,7 @@ try:
                     start_time=start_time,
                     config=config)
 except KeyboardInterrupt:
-    print("\n Training interrupted. Last best checkpoint saved")
+    print("\n Training interrupted. Last best checkpoint saved\n")
 
 
 
