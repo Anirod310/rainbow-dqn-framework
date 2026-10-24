@@ -84,7 +84,7 @@ for episode in range(num_train_episodes):
         observation = next_observation
 
         step_count += 1
-        if len(replay_buffer.memory) >= 50000 and step_count % config['environment']['frameskip_wrap'] == 0:
+        if len(replay_buffer.memory) >= 50000 and step_count % config['learning']['update_frequency'] == 0:
             observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
             loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 

@@ -44,7 +44,7 @@ class Learner():
 
         with torch.no_grad():
 
-            terminated_tensor_mask = torch.logical_not(torch.tensor(terminated_batch, dtype=torch.bool).to(self.device)).float()
+            terminated_tensor_mask = torch.logical_not(torch.tensor(terminated_batch, dtype=torch.bool).to(self.device)).float()#to invert zero and ones
 
             tensor_reward_batch = torch.tensor(reward_batch, dtype=torch.float32).to(self.device)
             tensor_next_observation_batch = torch.tensor(next_observation_batch, dtype=torch.float32).to(self.device)
