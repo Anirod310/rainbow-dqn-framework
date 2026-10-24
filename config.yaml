@@ -23,7 +23,7 @@ agent:
   annealing_duration: 1000000
 
 replay_buffer:
-  memory_capacity: 300000
+  memory_capacity: 500000
   mini_batch_size: 32
 
 learning:
@@ -35,8 +35,9 @@ learning:
   target_network_update_freq: 10000
 
 training:
-  num_episodes: 30000
+  num_episodes: 20000
+  total_frames: 50000000
 
 evaluate:
   num_episodes: 30
-  checkpoint_path: checkpoints/baseline/latest_seed42_buffer300k_30kEps.pth
+  checkpoint_path: checkpoints/baseline/latest_seed42_buffer500k_20kEps.pth
