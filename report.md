@@ -84,21 +84,66 @@ This section is mainly dedicated to documenting all the stages I went through du
 
 ### 1 - DQN Baseline
 
-After roughly defining the framework architecture, the next step was to Implement the baseline DQN. To do so, I first try to implement the paper [Human-level control through deep reinforcement learning](https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf), which Implements basic DQN methods to all the Atari games. I use Gymnasium Atari enviromnent, and start with only one game : Breakout.  
+#### A) Implementation and Hyperparameters
 
-Here's how I structured the baseline training architecture : 
-- Almost everything is objects.
-- The factory owns all the objects and environment creation 
-- The online model computes a q-value for each action regarding the observation of the environment
-- The agent selects the action with the highest value 
-- The replay buffer stores a tuple containing the observation, the action taken, the reward obtained for this action, the next observation of the environment and if the game is terminated, then we perform a learning step
-- For the learning step, the learner object will use another model (target model) to compute the target value(by using the next observation) for the observation of the batch.
-- In the learner, we then use the Huber loss(which is the pytorch loss that is the closer to the one of the original paper ) to compute the error
-- Then we perform a backpropagation with loss.backward(), and finally a gradient descent step with optimizer.step(). We use RMS prop for the optimizer, with the config described below. 
-- At the end of training, we save a pth file containing the weights state dict, the seed used, the number of training episodes, the total emulator frames, the last average reward over an interval of episodes, the training duration in seconds and finally the average evaluation reward(which is defined at 0 and then overwritten during evaluation) 
+After roughly defining the framework architecture, the next step was to implement the baseline DQN. To do so, I first tried to implement the paper [Human-level control through deep reinforcement learning](https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf), which implements the basic DQN method for all the Atari games. I use the Gymnasium Atari environment and start with only one game: Breakout.
 
-For the evaluation baseline, we just load the pth file, use the weights saved, then plays for a number of eval episodes in eval mod (torch.no_grad() and model.eval()).
+Here's how I structured the baseline training architecture:
+- Almost everything is an object, and I use a config.yaml file for as many parameters as I can, in order to control all the experiments from this file only.
 
-Now let's dive in the creation of every parts of all this workflow.
+- The factory owns all the objects and environment creation.
+
+- The environment is preprocessed with the Gymnasium wrappers, following the paper: each action is repeated 4 times (frame skip) and the observation is the pixel-wise maximum over the last two frames, converted to grayscale and resized to 84x84. A random number of no-op actions (up to 30) is played at the start of each episode, and the 4 most recent frames are stacked to form the input of the network. Observations are stored as uint8 then converted in torch tensors and divided by 255 when they are given to the network. A custom wrapper also presses FIRE at the start of the game and after each life lost, since Breakout needs it to launch the ball.
+
+- The online model computes a Q-value for each action given the observation of the environment.
+
+- The agent follows an epsilon-greedy policy: with probability epsilon it selects a random action, otherwise it selects the action with the highest Q-value. Epsilon is linearly annealed from 1 to 0.1 over the first 1,000,000 emulator frames, and then stays fixed at 0.1.
+
+- The replay buffer stores a tuple containing the observation, the action taken, the reward obtained for this action (clipped to -1, 0 or +1), the next observation of the environment and whether the transition is terminal. A transition is considered terminal when the game is over, but also each time a life is lost, as in the paper. The episode itself continues until the game is over, and the score is not affected by this.
+
+- Learning starts once the replay buffer contains 50,000 transitions. After that, a learning step is performed once every 4 agent steps (i.e. every 16 emulator frames), on a minibatch sampled uniformly from the replay buffer.
+
+- For the learning step, the learner object will use another model (target model) to compute the target value (by using the next observation) for the observations of the batch. The target is not bootstrapped on terminal transitions.
+
+- In the learner, we then use the Huber loss (which is the PyTorch loss that is the closest to the one of the original paper) to compute the error.
+
+- Then we perform backpropagation with loss.backward(), and finally a gradient descent step with optimizer.step(). We use RMSprop for the optimizer, with the configuration described below. The target model is updated with the weights of the online model every 10,000 learning steps.
+
+- At the end of training, we save a .pth file containing the weights state dict, the seed used, the number of training episodes, the total emulator frames, the last average reward over an interval of episodes, the training duration in seconds and finally the average evaluation reward (which is initialized to 0 and then overwritten during evaluation).
+
+For the evaluation baseline, we just load the .pth file, use the saved weights, then play for a number of evaluation episodes in eval mode (torch.no_grad() and model.eval()).
+
+In order to be as faithful to the original paper as possible, I use the hyperparameters listed in the *Extended Data Table 1*:
+
+| Hyperparameter | Paper (Mnih et al., 2015) | My implementation |
+|---|---|---|
+| minibatch size | 32 | 32 |
+| replay memory size | 1,000,000 | 500,000 / 300,000 (depending on the implementation; further explanations of these choices below) |
+| agent history length | 4 | 4 |
+| target network update frequency | 10,000 | 10,000 |
+| discount factor | 0.99 | 0.99 |
+| action repeat | 4 | 4 |
+| update frequency | 4 | 4 |
+| learning rate | 0.00025 | 0.00025 |
+| gradient momentum | 0.95 | 0.95 |
+| squared gradient momentum | 0.95 | 0.95 |
+| min squared gradient | 0.01 | 0.01 (slight difference from the paper: PyTorch RMSprop eps, added outside the square root) |
+| initial exploration | 1 | 1 |
+| final exploration | 0.1 | 0.1 |
+| final exploration frame | 1,000,000 | 1,000,000 |
+| replay start size | 50,000 | 50,000 (counted in transitions, i.e. agent steps) |
+| no-op max | 30 | 30 (default of the AtariPreprocessing Gymnasium wrapper) |
+
+**Other differences from the paper**
+
+| Aspect | Paper | My implementation |
+|---|---|---|
+| Loss | Error term clipped to [-1, 1] | Huber loss (equivalent gradient), averaged over the minibatch |
+| Optimizer | RMSProp | PyTorch RMSprop with centered=True |
+| Reward | Clipped to -1, 0, +1 | Clipped to -1, 0, +1 with np.sign (stored in the replay buffer) |
+| Life loss | Marks the end of an episode during training | Same, with a forced FIRE action after each life lost |
+| Environment | Arcade Learning Environment, Breakout | ALE/Breakout-v5, repeat_action_probability=0 |
+
+
 
 
