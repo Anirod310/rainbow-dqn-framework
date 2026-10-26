@@ -4,6 +4,7 @@ from ..checkpoints import save_checkpoint
 import torch
 import numpy as np
 import time
+from tqdm import tqdm
 
 #----------Object construction part---------
 
@@ -42,10 +43,15 @@ print(f"Using device: {learner.device}")
 
 num_train_episodes = config['training']['num_episodes']
 total_frames = config['training']['total_frames']
-average_reward = 0
-best_average_reward = 0
 frame_count = 0
 step_count = 0
+
+pbar = tqdm(total=total_frames, unit="frame", unit_scale=True)
+last_frame_count = 0
+
+average_reward = 0
+best_average_reward = 0
+
 loss = 0
 
 print_interval = max(1, num_train_episodes // 20)
@@ -56,7 +62,7 @@ try:
     for episode in range(num_train_episodes):
 
         if frame_count >= total_frames:
-            print(f"Frame limit ({total_frames}) reached.")
+            tqdm.write(f"Frame limit ({total_frames}) reached.")
             break
 
         if episode == 0:
@@ -98,14 +104,17 @@ try:
         minutes = int((elapsed_time % 3600) // 60)
         seconds = int(elapsed_time % 60)
 
+        pbar.update(frame_count - last_frame_count)
+        last_frame_count = frame_count
+        
         if (episode + 1) % print_interval == 0:
             average_reward = average_reward / print_interval
-            print(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
-            print(f"Training time : {hours}h {minutes}m {seconds}s")
+            tqdm.write(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
+            tqdm.write(f"Training time : {hours}h {minutes}m {seconds}s")
 
             if average_reward >  best_average_reward:
 
-                print("best average reward reached !")
+                tqdm.write("best average reward reached !")
 
                 save_checkpoint(online_model=online_model,
                         seed=seed,
@@ -127,6 +136,9 @@ try:
                     average_reward=average_reward,
                     start_time=start_time,
                     config=config)
+
+    pbar.close()
+    
 except KeyboardInterrupt:
     print("\n Training interrupted. Last best checkpoint saved\n")
 
