@@ -1,6 +1,6 @@
 environment:
   type: atari
-  name: ALE/Pong-v5
+  name: ALE/SpaceInvaders-v5
   frameskip_env: 1
   frameskip_wrap: 4
   render_mode: null
@@ -9,7 +9,7 @@ environment:
     fire_reset:
       enabled: false
 
-  random_seed: 42
+  random_seed: 41
 
 preprocessing:
   enabled: true
@@ -37,8 +37,8 @@ learning:
 
 training:
   num_episodes: 20000
-  total_frames: 10000000
+  total_frames: 50000000
 
 evaluate:
   num_episodes: 100
-  checkpoint_path: checkpoints/pong/seed42_buffer300k_10kEps.pth
+  checkpoint_path: checkpoints/pong/seed42_buffer300k_50M_frames.pth

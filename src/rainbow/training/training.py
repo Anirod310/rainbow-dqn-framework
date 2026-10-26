@@ -48,8 +48,9 @@ step_count = 0
 
 pbar = tqdm(total=total_frames, unit="frame", unit_scale=True)
 last_frame_count = 0
+episodes_in_interval = 0
 
-average_reward = 0
+episode_rewards_sum = 0
 best_average_reward = 0
 
 loss = 0
@@ -60,8 +61,32 @@ start_time = time.perf_counter()
 
 try:
     for episode in range(num_train_episodes):
-
+        
         if frame_count >= total_frames:
+            if episodes_in_interval > 0:
+                average_reward = episode_rewards_sum / episodes_in_interval
+                tqdm.write(
+                    f"Final partial interval: {episodes_in_interval} completed episodes | "
+                    f"Frames: {frame_count} | "
+                    f"Average reward: {average_reward}"
+                )
+
+                if average_reward >  best_average_reward:
+
+                    tqdm.write("best average reward reached !")
+
+                    save_checkpoint(online_model=online_model,
+                            seed=seed,
+                            episodes=num_train_episodes,
+                            frame_count=frame_count,
+                            average_reward=average_reward,
+                            start_time=start_time,
+                            config=config)
+
+                    best_average_reward = average_reward
+            else : 
+                tqdm.write("Frame limit reached; no completed episodes in the final interval.")
+
             tqdm.write(f"Frame limit ({total_frames}) reached.")
             break
 
@@ -78,7 +103,9 @@ try:
             action = agent.select_action(observation)
 
             next_observation, reward, terminated, truncated, info = env.step(action)    
+
             frame_count += 4 #Because each step takes 4 frames 
+
             agent.epsilon = max(config['agent']['epsilon_end'], config['agent']['epsilon_start']-frame_count/config['agent']['annealing_duration']*(config['agent']['epsilon_start'] - config['agent']['epsilon_end']))
 
             episode_rewards += reward
@@ -97,7 +124,8 @@ try:
                 observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
                 loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 
-        average_reward += episode_rewards
+        episode_rewards_sum += episode_rewards
+        episodes_in_interval += 1
 
         elapsed_time = time.perf_counter() - start_time
         hours = int(elapsed_time // 3600)
@@ -108,7 +136,7 @@ try:
         last_frame_count = frame_count
         
         if (episode + 1) % print_interval == 0:
-            average_reward = average_reward / print_interval
+            average_reward = episode_rewards_sum / print_interval
             tqdm.write(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
             tqdm.write(f"Training time : {hours}h {minutes}m {seconds}s")
 
@@ -126,16 +154,19 @@ try:
 
                 best_average_reward = average_reward
 
-            if(episode+1) != num_train_episodes:
-                average_reward = 0
+            
+            episode_rewards_sum = 0
+            episodes_in_interval = 0
 
-    save_checkpoint(online_model=online_model,
-                    seed=seed,
-                    episodes=episode+1,
-                    frame_count=frame_count,
-                    average_reward=average_reward,
-                    start_time=start_time,
-                    config=config)
+
+    if average_reward >  best_average_reward:
+        save_checkpoint(online_model=online_model,
+                        seed=seed,
+                        episodes=episode+1,
+                        frame_count=frame_count,
+                        average_reward=average_reward,
+                        start_time=start_time,
+                        config=config)
 
     pbar.close()
     

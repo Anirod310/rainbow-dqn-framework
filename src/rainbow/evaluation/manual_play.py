@@ -9,7 +9,6 @@ factory = Factory(config)
 env = factory.create_manual_play_environment()
 
 BREAKOUT_KEYS_TO_ACTION = {
-    (): 0,          # NOOP
     (" ",): 1,      # FIRE
     ("a",): 3,      # LEFT
     ("d",): 2,      # RIGHT
