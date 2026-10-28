@@ -36,9 +36,9 @@ learning:
   update_frequency: 4 #Learning occurs each 4 a gent actions, not each agent action
 
 training:
-  num_episodes: 20000
+  num_episodes: 30000
   total_frames: 50000000
 
 evaluate:
   num_episodes: 100
-  checkpoint_path: checkpoints/pong/seed42_buffer300k_50M_frames.pth
+  checkpoint_path: checkpoints/space_invaders/seed42_buffer300k_50M_frames.pth
