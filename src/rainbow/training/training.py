@@ -16,10 +16,7 @@ env = factory.create_environment()
 if config['environment']['wrappers']['fire_reset']['enabled']:
     env = factory.create_fire_reset_wrapper()
 
-online_model = factory.create_online_model()
-target_model = factory.create_target_model()
-
-target_model.load_state_dict(online_model.state_dict())
+online_model, target_model = factory.create_model()
 
 agent = factory.create_agent()
 
@@ -42,7 +39,7 @@ last_frame_count = 0
 episodes_in_interval = 0
 
 episode_rewards_sum = 0
-best_average_reward = 0
+best_average_reward = float('-inf')
 
 loss = 0
 

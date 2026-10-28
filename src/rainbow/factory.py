@@ -86,7 +86,7 @@ class Factory():
             '''
             return self.preprocessor
         
-    def create_online_model(self):
+    def create_model(self):
         if self.config['preprocessing']['enabled'] : 
             input_dim = (
                 self.config['preprocessing']['frame_stack_size'],
@@ -103,29 +103,12 @@ class Factory():
             backbone = MLPBackbone
 
         self.online_model = CompleteModel(input_dim, output_dim, backbone)
-
-        return self.online_model
-
-    def create_target_model(self):
-        if self.config['preprocessing']['enabled'] : 
-            input_dim = (
-                self.config['preprocessing']['frame_stack_size'],
-                *self.config['preprocessing']['image_size'])
-
-        else : 
-            shape = self.environment.observation_space.shape
-            input_dim = int(shape[0])
-
-        output_dim = self.environment.action_space.n
-
-        if self.config['environment']['type'] == "atari":
-            backbone = CNNBackbone
-        else : 
-            backbone = MLPBackbone
-
+        
         self.target_model = CompleteModel(input_dim, output_dim, backbone)
+        self.target_model.load_state_dict(self.online_model.state_dict())
 
-        return self.target_model
+        return self.online_model, self.target_model
+
 
     def create_agent(self):
         self.agent = Agent(self.online_model,
