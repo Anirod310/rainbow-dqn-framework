@@ -37,39 +37,68 @@ print(f"Configuration : seed : {checkpoint['seed']} | Last average training rewa
 
 with torch.no_grad():
 
-    for episode in range(num_eval_episodes):
-
-        if episode == 0:
-            observation, info = env.reset(seed=seed)
-        else:
-            observation, info = env.reset()
-
-        done = False
-        episode_rewards = 0
-
-
-        while (not done):
-
-            action = agent.select_action(observation)
-            
-            next_observation, reward, terminated, truncated, info = env.step(action)
-
-            episode_rewards += reward
-
-            if terminated or truncated:
-                done = True
-
-            observation = next_observation
-
-        average_rewards += episode_rewards
+    if config['environment']['render_mode'] == "human" : 
+        for episode in range(10):
         
-    average_rewards = average_rewards / num_eval_episodes
+            if episode == 0:
+                observation, info = env.reset(seed=seed)
+            else:
+                observation, info = env.reset()
+    
+            done = False
+            episode_rewards = 0
+    
+            while (not done):
+    
+                action = agent.select_action(observation)
+                
+                next_observation, reward, terminated, truncated, info = env.step(action)
+    
+                episode_rewards += reward
+    
+                if terminated or truncated:
+                    done = True
+    
+                observation = next_observation
+    
+            print(f"Episode : {episode} | Episode reward : {episode_rewards}")
+            average_rewards = 0
 
-    checkpoint["evaluation_mean_reward"] = average_rewards
-    torch.save(checkpoint, config['evaluate']['checkpoint_path'])
+    else : 
+        for episode in range(num_eval_episodes):
 
-    print(f"Average Evaluation reward : {checkpoint['evaluation_mean_reward']}")
-    average_rewards = 0
+            if episode == 0:
+                observation, info = env.reset(seed=seed)
+            else:
+                observation, info = env.reset()
 
+            done = False
+            episode_rewards = 0
+
+
+            while (not done):
+
+                action = agent.select_action(observation)
+                
+                next_observation, reward, terminated, truncated, info = env.step(action)
+
+                episode_rewards += reward
+
+                if terminated or truncated:
+                    done = True
+
+                observation = next_observation
+
+            average_rewards += episode_rewards
+            
+        average_rewards = average_rewards / num_eval_episodes
+
+        checkpoint["evaluation_mean_reward"] = average_rewards
+        torch.save(checkpoint, config['evaluate']['checkpoint_path'])
+
+        print(f"Average Evaluation reward : {checkpoint['evaluation_mean_reward']}")
+        average_rewards = 0
+
+    
     env.close()
 

@@ -3,7 +3,7 @@ environment:
   name: LunarLander-v3
   frameskip_env: 1
   frameskip_wrap: 4
-  render_mode: null
+  render_mode: human
 
   wrappers:
     fire_reset:
