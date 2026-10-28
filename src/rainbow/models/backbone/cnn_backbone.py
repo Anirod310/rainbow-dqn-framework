@@ -13,11 +13,12 @@ class CNNBackbone(BaseModel):
                               nn.Conv2d(64, 64, kernel_size=(3,3), stride=1),
                               nn.ReLU(),
                               nn.Flatten(),
-                              nn.Linear(3136, self.output_dim),
+                              nn.Linear(3136, self.output_dim), #Only works for 84x84 images since we hardcode the shape here
                               nn.ReLU()
                             )
 
     def forward(self, x):
+        x = x/255
         x = self.model(x)
         return x
 

@@ -15,7 +15,7 @@ class Agent():
         else:
             observation_tensor = torch.tensor(
                     observation, dtype=torch.float32
-                ).unsqueeze(0).to(self.device) / 255.0
+                ).unsqueeze(0).to(self.device)
             q_values = self.online_model(observation_tensor)
             action = int(q_values.argmax())
         return action

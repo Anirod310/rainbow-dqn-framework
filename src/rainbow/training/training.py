@@ -95,7 +95,7 @@ try:
 
             next_observation, reward, terminated, truncated, info = env.step(action)    
 
-            frame_count += 4 #Because each step takes 4 frames 
+            frame_count +=  config['environment']['frameskip_wrap'] if config['environment']['type'] == "atari" else 1 
 
             agent.epsilon = max(config['agent']['epsilon_end'], config['agent']['epsilon_start']-frame_count/config['agent']['annealing_duration']*(config['agent']['epsilon_start'] - config['agent']['epsilon_end']))
 
@@ -106,12 +106,12 @@ try:
 
             life_lost = info.get("life_lost", False)#Like this if we disable fire_reset it will just count on terminated
 
-            replay_buffer.store_transition(observation, action, np.sign(reward), next_observation, terminated or life_lost, truncated)#We store life_lost as the end of a session in the learning so the agent understands that loosing a life isnt good
+            replay_buffer.store_transition(observation, action, np.sign(reward) if config['environment']['type']=="atari" else reward, next_observation, terminated or life_lost, truncated)#We store life_lost as the end of a session in the learning so the agent understands that loosing a life isnt good
 
             observation = next_observation
 
             step_count += 1
-            if len(replay_buffer.memory) >= 50000 and step_count % config['learning']['update_frequency'] == 0:
+            if len(replay_buffer.memory) >= config['training']['replay_learning_start'] and step_count % config['learning']['update_frequency'] == 0:
                 observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
                 loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 

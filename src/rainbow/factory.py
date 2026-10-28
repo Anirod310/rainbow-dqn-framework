@@ -50,20 +50,28 @@ class Factory():
 
 
     def create_environment(self):
-        gym.register_envs(ale_py)
-        self.environment = gym.make(self.config['environment']['name'], frameskip=self.config['environment']['frameskip_env'], repeat_action_probability = 0, render_mode=self.config['environment']['render_mode'])
-        if self.config['preprocessing']['enabled'] and (self.config['preprocessing']['type'] == 'atari'):
-            self.environment = gym.wrappers.AtariPreprocessing(self.environment,
-                                                        frame_skip=self.config['environment']['frameskip_wrap'],
-                                                        screen_size=tuple(self.config['preprocessing']['image_size']),
-                                                        grayscale_obs=True,
-                                                        scale_obs=False)
-            self.environment = gym.wrappers.FrameStackObservation(self.environment, stack_size=self.config['preprocessing']['frame_stack_size'])
+        if self.config['environment']['type'] == "atari":
+            gym.register_envs(ale_py)
+            self.environment = gym.make(self.config['environment']['name'], frameskip=self.config['environment']['frameskip_env'], repeat_action_probability = 0, render_mode=self.config['environment']['render_mode'])
+            if self.config['preprocessing']['enabled'] and (self.config['preprocessing']['type'] == 'atari'):
+                self.environment = gym.wrappers.AtariPreprocessing(self.environment,
+                                                            frame_skip=self.config['environment']['frameskip_wrap'],
+                                                            screen_size=tuple(self.config['preprocessing']['image_size']),
+                                                            grayscale_obs=True,
+                                                            scale_obs=False)
+                self.environment = gym.wrappers.FrameStackObservation(self.environment, stack_size=self.config['preprocessing']['frame_stack_size'])
+        else:
+            self.environment = gym.make(self.config['environment']['name'], render_mode=self.config['environment']['render_mode'])
+
         return self.environment
 
     def create_manual_play_environment(self):
-        gym.register_envs(ale_py)
-        self.environment = gym.make(self.config['environment']['name'], obs_type="rgb", repeat_action_probability=0.0, render_mode="rgb_array")
+        if self.config['environment']['type'] == "atari":
+            gym.register_envs(ale_py)
+            self.environment = gym.make(self.config['environment']['name'], obs_type="rgb", repeat_action_probability=0.0, render_mode="rgb_array")
+        else : 
+            self.environment = gym.make(self.config['environment']['name'], render_mode="rgb_array")
+
         return self.environment
 
     def create_fire_reset_wrapper(self):
@@ -89,7 +97,7 @@ class Factory():
 
         output_dim = self.environment.action_space.n
 
-        if self.config['environment']['type'] == "atari":
+        if len(self.environment.observation_space.shape) == 3:
             backbone = CNNBackbone
         else : 
             backbone = MLPBackbone

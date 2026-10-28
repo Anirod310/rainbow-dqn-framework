@@ -11,7 +11,6 @@ class Learner():
 
         self.agent.online_model.to(self.device)
         self.target_model.to(self.device)
-
         self.optimizer = torch.optim.RMSprop(agent.online_model.parameters(), 
                                              lr=config['learning']['learning_rate'], 
                                              alpha=config['learning']['squared_gradient_momentum'], 
@@ -23,8 +22,8 @@ class Learner():
 
     def learning_loop(self, observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch):
 
-        observation_batch = observation_batch.astype(np.float32) / 255
-        next_observation_batch = next_observation_batch.astype(np.float32) / 255
+        observation_batch = observation_batch.astype(np.float32)
+        next_observation_batch = next_observation_batch.astype(np.float32)
 
         #----------Shape Tests------------#
         '''print("Observation batch:", observation_batch.shape, observation_batch.dtype,
