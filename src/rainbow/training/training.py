@@ -19,15 +19,6 @@ if config['environment']['wrappers']['fire_reset']['enabled']:
 online_model = factory.create_online_model()
 target_model = factory.create_target_model()
 
-dummy_tensor = torch.randn(
-    1,
-    config['preprocessing']['frame_stack_size'],
-    *config['preprocessing']['image_size']
-)#to initialize the model's weights since we use Lazy Linear | Not on device since models are put on device in the learner
-
-online_model(dummy_tensor)
-target_model(dummy_tensor)
-
 target_model.load_state_dict(online_model.state_dict())
 
 agent = factory.create_agent()

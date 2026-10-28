@@ -9,7 +9,7 @@ environment:
     fire_reset:
       enabled: false
 
-  random_seed: 41
+  random_seed: 42
 
 preprocessing:
   enabled: true
@@ -41,4 +41,4 @@ training:
 
 evaluate:
   num_episodes: 100
-  checkpoint_path: checkpoints/space_invaders/seed42_buffer300k_50M_frames.pth
+  checkpoint_path: checkpoints/space_invaders/tests.pth

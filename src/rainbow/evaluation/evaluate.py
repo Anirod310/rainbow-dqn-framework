@@ -33,7 +33,7 @@ num_eval_episodes = config['evaluate']['num_episodes']
 
 average_rewards = 0
 
-print(f"Configuration : seed : {checkpoint['seed']} | Last average training reward : {checkpoint['last_interval_training_episode_average_reward']} | Final number of frames for the whole training : {checkpoint['emulator_frames']}\n")
+print(f"Configuration : seed : {checkpoint['seed']} | Last average training reward : {checkpoint['last_interval_training_episode_average_reward']} | Frames at the last checkpoint saved : {checkpoint['emulator_frames']}\n")
 
 with torch.no_grad():
 

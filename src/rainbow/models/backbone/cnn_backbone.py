@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .interface_model import BaseModel
+from ..interface_model import BaseModel
 
 class CNNBackbone(BaseModel):
     def __init__(self, input_dim):
@@ -13,10 +13,11 @@ class CNNBackbone(BaseModel):
                               nn.Conv2d(64, 64, kernel_size=(3,3), stride=1),
                               nn.ReLU(),
                               nn.Flatten(),
-                              nn.LazyLinear(self.output_dim),
+                              nn.Linear(3136, self.output_dim),
                               nn.ReLU()
                             )
 
     def forward(self, x):
         x = self.model(x)
         return x
+

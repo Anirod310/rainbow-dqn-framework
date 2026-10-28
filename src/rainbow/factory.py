@@ -1,10 +1,18 @@
 import gymnasium as gym
 import ale_py
+
 from .models.complete_model import CompleteModel
+from.models.backbone.mlp_backbone import MLPBackbone
+from.models.backbone.cnn_backbone import CNNBackbone
+
 from .agent.agent import Agent
+
 from .replay_buffer.replay_buffer import ReplayBuffer
+
 from .learning.learner import Learner
+
 from.environment.wrappers.fire_reset import FireResetWrapper
+
 import torch
 import random
 import numpy as np
@@ -25,6 +33,7 @@ class Factory():
         self.agent = None
 
         self.mini_batch = None
+
 
     def set_random_seed(self):
         seed = self.config['environment']['random_seed']
@@ -70,26 +79,43 @@ class Factory():
             return self.preprocessor
         
     def create_online_model(self):
-        input_dim = (
-            self.config['preprocessing']['frame_stack_size'],
-            *self.config['preprocessing']['image_size'])
-            #To Solve : case when preprocessor is disabled
+        if self.config['preprocessing']['enabled'] : 
+            input_dim = (
+                self.config['preprocessing']['frame_stack_size'],
+                *self.config['preprocessing']['image_size'])
+        else : 
+            shape = self.environment.observation_space.shape
+            input_dim = int(shape[0])
 
         output_dim = self.environment.action_space.n
 
-        self.online_model = CompleteModel(input_dim, output_dim)
+        if self.config['environment']['type'] == "atari":
+            backbone = CNNBackbone
+        else : 
+            backbone = MLPBackbone
+
+        self.online_model = CompleteModel(input_dim, output_dim, backbone)
 
         return self.online_model
 
     def create_target_model(self):
-        input_dim = (
-            self.config['preprocessing']['frame_stack_size'],
-            *self.config['preprocessing']['image_size'])
-         #To Solve : case when preprocessor is disabled
+        if self.config['preprocessing']['enabled'] : 
+            input_dim = (
+                self.config['preprocessing']['frame_stack_size'],
+                *self.config['preprocessing']['image_size'])
+
+        else : 
+            shape = self.environment.observation_space.shape
+            input_dim = int(shape[0])
 
         output_dim = self.environment.action_space.n
 
-        self.target_model = CompleteModel(input_dim, output_dim)
+        if self.config['environment']['type'] == "atari":
+            backbone = CNNBackbone
+        else : 
+            backbone = MLPBackbone
+
+        self.target_model = CompleteModel(input_dim, output_dim, backbone)
 
         return self.target_model
 
