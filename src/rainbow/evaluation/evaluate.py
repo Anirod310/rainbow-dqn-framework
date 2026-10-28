@@ -14,10 +14,10 @@ if config['environment']['wrappers']['fire_reset']['enabled']:
 
 
 checkpoint = torch.load(config['evaluate']['checkpoint_path'],
-                        weights_only=True)
+                        weights_only=False)
 
 
-online_model = factory.create_online_model()
+online_model, __ = factory.create_model()
 online_model.load_state_dict(checkpoint["model_state_dict"])
 online_model.eval()
 

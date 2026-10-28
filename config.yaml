@@ -1,6 +1,6 @@
 environment:
-  type: atari
-  name: ALE/SpaceInvaders-v5
+  type: vector
+  name: LunarLander-v3
   frameskip_env: 1
   frameskip_wrap: 4
   render_mode: null
@@ -12,7 +12,7 @@ environment:
   random_seed: 42
 
 preprocessing:
-  enabled: true
+  enabled: false
   type: atari
   frame_stack_size: 4
   image_size: [84, 84]
@@ -20,26 +20,26 @@ preprocessing:
 agent:
   epsilon_start: 1.0
   epsilon_end: 0.1
-  annealing_duration: 1000000
+  annealing_duration: 200000
 
 replay_buffer:
-  memory_capacity: 300000
-  mini_batch_size: 32
+  memory_capacity: 1000000
+  mini_batch_size: 64
 
 learning:
   gamma: 0.99
-  learning_rate: 0.00025
+  learning_rate: 0.0005
   gradient_momentum: 0.95
   squared_gradient_momentum: 0.95
   min_squared_gradient: 0.01
   target_network_update_freq: 10000
-  update_frequency: 4 #Learning occurs each 4 a gent actions, not each agent action
+  update_frequency: 4 #Learning occurs each 4 agent actions, not each agent action
 
 training:
-  num_episodes: 30000
-  total_frames: 50000000
-  replay_learning_start: 50000
+  num_episodes: 5000
+  total_frames: 10000000
+  replay_learning_start: 10000
 
 evaluate:
   num_episodes: 100
-  checkpoint_path: checkpoints/space_invaders/tests.pth
+  checkpoint_path: checkpoints/lunar_lander/dqn_seed42_RMSprop_10M_frames.pth
