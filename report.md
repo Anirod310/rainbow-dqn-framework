@@ -148,8 +148,25 @@ In order to be as faithful to the original paper as possible, I use the hyperpar
 
 In order to test the robustness of my implementation, I tried 3 games and compared my results with the paper's results, in conditions as close as possible to those of paper. We tested the implementation on **Breakout**, **Pong** and **Space Invaders**.
 
-**Breakout**
+**Greedy evaluation of the saved checkpoints** (100 episodes each, mean ± standard deviation of the episode scores, no-op starts up to 30, evaluation seed 42).
 
+| Game | Run | Training seed | Replay buffer | Frames at checkpoint | Eval ε = 0 | Eval ε = 0.05 |
+|---|---|---|---|---|---|---|
+| Breakout | 10,000 episodes | 42 | 300,000 | 16.7 M | 263.29 ± 40.93 | 158.41 ± 95.74 |
+| Breakout | 15,000 episodes | 42 | 500,000 | 18.1 M | 265.86 ± 34.69 | 197.68 ± 96.23 |
+| Breakout | 30,000 episodes (final model) | 42 | 300,000 | 83.3 M | 2.35 ± 2.29 | 2.64 ± 2.77 |
+| Pong | 10 M frames | 42 | 300,000 | 10.0 M | 12.36 ± 7.00 | 7.72 ± 7.81 |
+| Pong | 15,000 episodes | 42 | 300,000 | 20.0 M | 20.49 ± 0.50 | 16.98 ± 3.28 |
+| Space Invaders | 15,000 episodes | 41 | 300,000 | 20.0 M | 676.35 ± 189.16 | 635.25 ± 170.47 |
+| Space Invaders | 50 M frames budget (best checkpoint) | 41 | 300,000 | 27.6 M | 481.55 ± 91.94 | 579.15 ± 157.48 |
+
+**Reference scores** (Mnih et al., 2015, Extended Data Table 2; DQN after 50 M frames).
+
+| Game | Random | Human | DQN (paper) |
+|---|---|---|---|
+| Breakout | 1.7 | 31.8 | 401.2 ± 26.9 |
+| Pong | -20.7 | 9.3 | 18.9 ± 1.3 |
+| Space Invaders | 148 | 1652 | 1976 ± 893 |
 
 
 
