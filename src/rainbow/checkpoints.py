@@ -24,4 +24,3 @@ def save_checkpoint(
 
     checkpoint_path = config["evaluate"]["checkpoint_path"]
     torch.save(checkpoint, checkpoint_path)
-    print(f"Checkpoint saved to {checkpoint_path}")

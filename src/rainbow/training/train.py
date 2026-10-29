@@ -61,7 +61,7 @@ try:
 
                 if average_reward >  best_average_reward:
 
-                    tqdm.write("best average reward reached !")
+                    tqdm.write("best average reward reached ! Checkpoint saved")
 
                     save_checkpoint(online_model=online_model,
                             seed=seed,
@@ -135,7 +135,7 @@ try:
 
             if average_reward >  best_average_reward:
 
-                tqdm.write("best average reward reached !")
+                tqdm.write("best average reward reached ! Checkpoint saved")
 
                 save_checkpoint(online_model=online_model,
                         seed=seed,
