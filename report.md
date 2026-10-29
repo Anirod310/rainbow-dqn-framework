@@ -84,7 +84,7 @@ This section is mainly dedicated to documenting all the stages I went through du
 
 ### 1 - DQN Baseline
 
-#### A) Implementation and Hyperparameters
+#### Atari - Implementation and Hyperparameters
 
 After roughly defining the framework architecture, the next step was to implement the baseline DQN. To do so, I first tried to implement the paper [Human-level control through deep reinforcement learning](https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf), which implements the basic DQN method for all the Atari games. I use the Gymnasium Atari environment and start with only one game: Breakout.
 
@@ -113,7 +113,7 @@ Here's how I structured the baseline training architecture:
 
 For the evaluation baseline, we just load the .pth file, use the saved weights, then play for a number of evaluation episodes in eval mode (torch.no_grad() and model.eval()).
 
-In order to be as faithful to the original paper as possible, I use the hyperparameters listed in the *Extended Data Table 1*:
+In order to be as faithful to the original paper as possible, I use the hyperparameters listed in the *Extended Data Table 1* of the paper :
 
 | Hyperparameter | Paper (Mnih et al., 2015) | My implementation |
 |---|---|---|
@@ -143,6 +143,16 @@ In order to be as faithful to the original paper as possible, I use the hyperpar
 | Reward | Clipped to -1, 0, +1 | Clipped to -1, 0, +1 with np.sign (stored in the replay buffer) |
 | Life loss | Marks the end of an episode during training | Same, with a forced FIRE action after each life lost |
 | Environment | Arcade Learning Environment, Breakout | ALE/Breakout-v5, repeat_action_probability=0 |
+
+#### Atari - Results 
+
+In order to test the robustness of my implementation, I tried 3 games and compared my results with the paper's results, in conditions as close as possible to those of paper. We tested the implementation on **Breakout**, **Pong** and **Space Invaders**.
+
+**Breakout**
+
+
+
+
 
 
 

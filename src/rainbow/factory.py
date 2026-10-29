@@ -22,7 +22,7 @@ class Factory():
     def __init__(self, config):
         self.config = config
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(self.config['environment']['device'])
 
         self.environment = None
         self.preprocessor = None

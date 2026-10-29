@@ -9,7 +9,8 @@ environment:
     fire_reset:
       enabled: false
 
-  random_seed: 43
+  random_seed: 42
+  device: cpu
 
 preprocessing:
   enabled: false
@@ -53,4 +54,4 @@ training:
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/lunar_lander/dqn_seed43_Adam_500k_frames.pth
+  checkpoint_path: checkpoints/lunar_lander/dqn_seed42_Adam_500k_frames_cpu.pth
