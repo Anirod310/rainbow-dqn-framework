@@ -62,7 +62,7 @@ with torch.no_grad():
     
                 observation = next_observation
     
-            print(f"Episode : {episode} | Episode reward : {episode_rewards}")
+            print(f"Episode : {episode+1} | Episode reward : {episode_rewards}")
             average_rewards = 0
 
     else : 

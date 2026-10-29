@@ -54,8 +54,8 @@ try:
             if episodes_in_interval > 0:
                 average_reward = episode_rewards_sum / episodes_in_interval
                 tqdm.write(
-                    f"Final partial interval: {episodes_in_interval} completed episodes | "
-                    f"Frames: {frame_count} | "
+                    f"Final partial interval: {episodes_in_interval} completed episodes\n"
+                    f"Frames: {frame_count}\n"
                     f"Average reward: {average_reward}"
                 )
 
@@ -125,8 +125,13 @@ try:
         
         if (episode + 1) % print_interval == 0:
             average_reward = episode_rewards_sum / print_interval
-            tqdm.write(f"Episode : {episode + 1} | Frames : {frame_count} | Episode Rewards : {episode_rewards} | Average Reward over last {print_interval} episodes : {average_reward} | loss : {loss} | Epsilon : {agent.epsilon}")
-            tqdm.write(f"Training time : {hours}h {minutes}m {seconds}s")
+            tqdm.write(f"Episode : {episode + 1}"
+                       f"\nFrames : {frame_count}"
+                       f"\nEpisode Rewards : {episode_rewards}\n"
+                       f"Average Reward over last {print_interval} episodes : {average_reward}"
+                       f"\nloss : {loss}"
+                       f"\nEpsilon : {agent.epsilon}"
+                       f"\nTraining time : {hours}h {minutes}m {seconds}s")
 
             if average_reward >  best_average_reward:
 

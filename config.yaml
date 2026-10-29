@@ -20,11 +20,11 @@ preprocessing:
 agent:
   epsilon_start: 1.0
   epsilon_end: 0.1
-  annealing_duration: 200000
+  annealing_duration: 50000
 
 replay_buffer:
   memory_capacity: 1000000
-  mini_batch_size: 64
+  mini_batch_size: 128
 
 learning:
   optimizer:
@@ -38,19 +38,19 @@ learning:
       centered: true
 
     Adam:
-      lr: 0.0001
+      lr: 0.0005 
       eps: 0.00015
 
   gamma: 0.99
-  target_network_update_freq: 10000
-  update_frequency: 4 #Learning occurs each 4 agent actions, not each agent action
+  target_network_update_freq: 1000
+  update_frequency: 1 #Learning occurs each update_frequency agent actions
 
 training:
   num_episodes: 5000
-  total_frames: 10000000
-  replay_learning_start: 10000
+  total_frames: 500000
+  replay_learning_start: 1000
 
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/lunar_lander/dqn_seed42_RMSprop_10M_frames.pth
+  checkpoint_path: checkpoints/lunar_lander/dqn_seed42_Adam_500k_frames.pth
