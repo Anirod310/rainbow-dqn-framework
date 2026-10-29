@@ -3,7 +3,7 @@ environment:
   name: LunarLander-v3
   frameskip_env: 1
   frameskip_wrap: 4
-  render_mode: human
+  render_mode: null
 
   wrappers:
     fire_reset:
@@ -27,11 +27,21 @@ replay_buffer:
   mini_batch_size: 64
 
 learning:
+  optimizer:
+    name: Adam
+
+    RMSprop:
+      lr: 0.00025
+      momentum: 0.95 #gradient momentum
+      alpha: 0.95 #squared gradient momentum
+      eps: 0.01 #min squared gradient
+      centered: true
+
+    Adam:
+      lr: 0.0001
+      eps: 0.00015
+
   gamma: 0.99
-  learning_rate: 0.0005
-  gradient_momentum: 0.95
-  squared_gradient_momentum: 0.95
-  min_squared_gradient: 0.01
   target_network_update_freq: 10000
   update_frequency: 4 #Learning occurs each 4 agent actions, not each agent action
 
@@ -41,5 +51,6 @@ training:
   replay_learning_start: 10000
 
 evaluate:
+  num_render_episodes: 10 
   num_episodes: 100
   checkpoint_path: checkpoints/lunar_lander/dqn_seed42_RMSprop_10M_frames.pth

@@ -11,12 +11,13 @@ class Learner():
 
         self.agent.online_model.to(self.device)
         self.target_model.to(self.device)
-        self.optimizer = torch.optim.RMSprop(agent.online_model.parameters(), 
-                                             lr=config['learning']['learning_rate'], 
-                                             alpha=config['learning']['squared_gradient_momentum'], 
-                                             eps=config['learning']['min_squared_gradient'], 
-                                             momentum=config['learning']['gradient_momentum'],
-                                             centered=True )
+
+        opt_config = config['learning']['optimizer']
+        self.optimizer = getattr(torch.optim, opt_config['name'])(
+            agent.online_model.parameters(),
+            **opt_config[opt_config['name']],
+        )
+
         self.loss = torch.nn.HuberLoss() #Not exactly the same loss as the paper's one but still rlly good 
         self.target_update_cpt = 0
 

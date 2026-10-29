@@ -30,6 +30,7 @@ online_model.to(agent.device)
 
 
 num_eval_episodes = config['evaluate']['num_episodes']
+num_render_episodes = config['evaluate']['num_render_episodes']
 
 average_rewards = 0
 
