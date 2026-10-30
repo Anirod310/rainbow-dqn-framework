@@ -9,7 +9,7 @@ environment:
     fire_reset:
       enabled: true
 
-  random_seed: 41
+  random_seed: 42
   device: cpu
 
 preprocessing:
@@ -21,7 +21,7 @@ preprocessing:
 agent:
   epsilon_start: 1.0
   epsilon_end: 0.1
-  annealing_duration: 50000
+  annealing_duration: 1000000
 
 replay_buffer:
   memory_capacity: 500000
@@ -50,11 +50,11 @@ learning:
   update_frequency: 4 #Learning occurs each update_frequency agent actions
 
 training:
-  num_episodes: 5000
-  total_frames: 500000
-  replay_learning_start: 1000
+  num_episodes: 15000
+  total_frames: 20000000
+  replay_learning_start: 50000
 
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/lunar_lander/ddqn_seed41_Adam_500k_frames_cpu.pth
+  checkpoint_path: checkpoints/lunar_lander/ddqn_seed42_buffer500k_15kEps
