@@ -46,7 +46,7 @@ print(f"----------Configuration----------\n"
 with torch.no_grad():
 
     if config['environment']['render_mode'] == "human" : 
-        for episode in range(10):
+        for episode in range(config['environment']['num_render_episodes']):
         
             if episode == 0:
                 observation, info = env.reset(seed=seed)
