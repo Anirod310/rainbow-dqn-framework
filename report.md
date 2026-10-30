@@ -133,6 +133,7 @@ In order to be as faithful to the original paper as possible, I use the hyperpar
 | final exploration frame | 1,000,000 | 1,000,000 |
 | replay start size | 50,000 | 50,000 (counted in transitions, i.e. agent steps) |
 | no-op max | 30 | 30 (default of the AtariPreprocessing Gymnasium wrapper) |
+|
 
 **Other differences from the paper**
 
@@ -143,7 +144,7 @@ In order to be as faithful to the original paper as possible, I use the hyperpar
 | Reward | Clipped to -1, 0, +1 | Clipped to -1, 0, +1 with np.sign (stored in the replay buffer) |
 | Life loss | Marks the end of an episode during training | Same, with a forced FIRE action after each life lost |
 | Environment | Arcade Learning Environment, Breakout | ALE/Breakout-v5, repeat_action_probability=0 |
-
+|
 #### Atari - Results 
 
 In order to test the robustness of my implementation, I tried 3 games and compared my results with the paper's results, in conditions as close as possible to those of paper. We tested the implementation on **Breakout**, **Pong** and **Space Invaders**.
@@ -159,6 +160,7 @@ In order to test the robustness of my implementation, I tried 3 games and compar
 | Pong | 15,000 episodes | 42 | 300,000 | 20.0 M | 20.49 ± 0.50 | 16.98 ± 3.28 |
 | Space Invaders | 15,000 episodes | 41 | 300,000 | 20.0 M | 676.35 ± 189.16 | 635.25 ± 170.47 |
 | Space Invaders | 50 M frames budget (best checkpoint) | 41 | 300,000 | 27.6 M | 481.55 ± 91.94 | 579.15 ± 157.48 |
+|
 
 **Reference scores** (Mnih et al., 2015, Extended Data Table 2; DQN after 50 M frames).
 
@@ -167,10 +169,36 @@ In order to test the robustness of my implementation, I tried 3 games and compar
 | Breakout | 1.7 | 31.8 | 401.2 ± 26.9 |
 | Pong | -20.7 | 9.3 | 18.9 ± 1.3 |
 | Space Invaders | 148 | 1652 | 1976 ± 893 |
+|
 
+#### Atari - Interpretations
 
+**Breakout**  
+Breakout was the first game I worked on, and I used it to test each component of the baseline architecture. Regarding the results, I observed that the agent needed more than 5 million frames before it started to learn effectively. Furthermore, after approximately 15–20 million frames, learning appeared to stagnate and, more importantly, performance began to deteriorate. For example, in the 80-million-frame run, the average evaluation reward eventually dropped to a level close to that obtained with random actions.
 
+I have not yet identified the exact cause of this behaviour. My main hypothesis is that the replay buffer capacity may be a contributing factor. Due to the RAM limitations of my setup, I use a buffer that is half the size of the one used in the original paper, as I cannot afford to store one million transitions. This smaller capacity could reduce the diversity of the experiences available for training and cause the agent to forget previously learned behaviours as older transitions are replaced by newer ones.
 
+This limitation could also partly explain the differences between the average rewards obtained in my experiments and those reported in the original paper. However, further investigation is needed to determine whether the replay buffer capacity is actually responsible for these differences.  
+
+---
+
+**Pong**  
+The results obtained on Pong were quite different. The agent learned relatively quickly to play the game at a near-optimal level, consistently achieving scores close to the maximum.
+
+By visually observing the agent's behaviour, I noticed that it had learned a very specific strategy: it repeatedly hit the ball with the corner of its paddle while moving the paddle downwards. This produced a trajectory that the opponent's paddle could not reach, allowing the agent to win almost every time.
+
+This was particularly interesting because it showed that the agent could discover an effective strategy through reinforcement learning without being explicitly programmed to use it. It was also satisfying to see the framework learn such an effective policy, demonstrating that the baseline architecture could successfully solve at least some Atari environments.
+
+---
+
+**Space Invaders**  
+Finally, Space Invaders highlighted the potential differences between my implementation and the one described in the original paper. Although the agent learned a policy, its performance remained significantly lower than the results reported in the paper, reaching approximately 30% of the reported performance.
+
+Initially, I suspected that this could be due to the lack of sufficiently informative rewards during the early stages of training, combined with the greater complexity of the game compared with the two previous environments. However, when I extended the training duration, I observed a similar deterioration in performance to the one seen in Breakout.
+
+This raised the possibility that some aspects of my implementation or training configuration might be limiting performance. Since such a significant gap could indicate differences in the experimental setup or implementation, I decided to investigate further rather than simply increasing the training duration.
+
+To help identify potential issues and validate the modularity of the framework, I implemented the next development step: extending support to other Gymnasium environments with different configurations, observation spaces, and action spaces. LunarLander was selected to test the framework on a non-Atari environment and verify that the architecture could handle vector observations as well as image-based observations.
 
 
 
