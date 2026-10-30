@@ -1,5 +1,6 @@
 from config import config
 from ..factory import Factory
+from pathlib import Path
 import torch
 
 #----------Object construction part---------
@@ -32,9 +33,15 @@ online_model.to(agent.device)
 num_eval_episodes = config['evaluate']['num_episodes']
 num_render_episodes = config['evaluate']['num_render_episodes']
 
+checkpoint_name = Path(config['evaluate']['checkpoint_path']).stem
+
 average_rewards = 0
 
-print(f"Configuration : seed : {checkpoint['seed']} | Last average training reward : {checkpoint['last_interval_training_episode_average_reward']} | Frames at the last checkpoint saved : {checkpoint['emulator_frames']}\n")
+print(f"----------Configuration----------\n"
+      f"checkpoint : {checkpoint_name}\n"
+      f"seed : {checkpoint['seed']}\n"
+      f"Last average training reward : {checkpoint['last_interval_training_episode_average_reward']}\n"
+      f"Frames at the last checkpoint saved : {checkpoint['emulator_frames']}\n")
 
 with torch.no_grad():
 
