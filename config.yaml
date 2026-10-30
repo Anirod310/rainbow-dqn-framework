@@ -28,6 +28,9 @@ replay_buffer:
   mini_batch_size: 128
 
 learning:
+  DDQN:
+    enabled: true
+
   optimizer:
     name: Adam
 
@@ -54,4 +57,4 @@ training:
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/lunar_lander/dqn_seed43_Adam_500k_frames_cpu.pth
+  checkpoint_path: checkpoints/lunar_lander/dqn_seed42_Adam_500k_frames_cuda.pth
