@@ -51,10 +51,10 @@ learning:
 
 training:
   num_episodes: 30000
-  total_frames: 50000000
+  total_frames: 15000000
   replay_learning_start: 50000
 
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/breakout/dqn_seed42_buffer500k_15kEps_momentum_zero
+  checkpoint_path: checkpoints/breakout/dqn_seed42_RMSProp_buffer500k_15kEps_momentum_zero.pth
