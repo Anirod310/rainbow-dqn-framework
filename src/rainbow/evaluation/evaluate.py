@@ -40,7 +40,7 @@ average_rewards = 0
 print(f"----------Configuration----------\n"
       f"checkpoint : {checkpoint_name}\n"
       f"seed : {checkpoint['seed']}\n"
-      f"Last average training reward : {checkpoint['last_interval_training_episode_average_reward']}\n"
+      f"Best average training reward : {checkpoint['best_interval_training_episode_average_reward']}\n"
       f"Frames at the last checkpoint saved : {checkpoint['emulator_frames']}\n")
 
 with torch.no_grad():

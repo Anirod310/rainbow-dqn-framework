@@ -16,7 +16,7 @@ def save_checkpoint(
     "seed": seed,
     "episodes": episodes + 1,
     "emulator_frames": frame_count,
-    "last_interval_training_episode_average_reward": average_reward,
+    "best_interval_training_episode_average_reward": average_reward,
     "evaluation_mean_reward": 0,
     "training_duration_seconds": time.perf_counter() - start_time,
     "config": config,
