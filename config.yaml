@@ -57,4 +57,4 @@ training:
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/breakout/dqn_seed42_buffer500k_15kEps
+  checkpoint_path: checkpoints/breakout/dqn_seed42_buffer500k_15kEps_momentum_zero

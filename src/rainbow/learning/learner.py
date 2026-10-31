@@ -60,7 +60,7 @@ class Learner():
                 target_values = tensor_reward_batch + self.config['learning']['gamma'] * selected_next_q_values * terminated_tensor_mask
 
             else :
-                target_values = tensor_reward_batch + self.config['learning']['gamma'] * (torch.max(self.target_model(tensor_next_observation_batch), dim=1).values) * terminated_tensor_mask
+                target_values = tensor_reward_batch + self.config['learning']['gamma'] * (torch.max(self.target_model(tensor_next_observation_batch), dim=1).values).unsqueeze(1) * terminated_tensor_mask
                                           
 
         loss = self.loss(chosen_q_values, target_values)
