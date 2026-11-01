@@ -2,6 +2,7 @@ from config import config
 from ..factory import Factory
 from pathlib import Path
 import torch
+from tqdm import tqdm
 
 #----------Object construction part---------
 
@@ -73,7 +74,7 @@ with torch.no_grad():
             average_rewards = 0
 
     else : 
-        for episode in range(num_eval_episodes):
+        for episode in tqdm(range(num_eval_episodes)):
 
             if episode == 0:
                 observation, info = env.reset(seed=seed)
