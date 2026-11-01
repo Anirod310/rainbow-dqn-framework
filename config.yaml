@@ -3,7 +3,7 @@ environment:
   name: ALE/Breakout-v5
   frameskip_env: 1
   frameskip_wrap: 4
-  render_mode: null
+  render_mode: human
 
   wrappers:
     fire_reset:
@@ -57,4 +57,4 @@ training:
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/breakout/dqn_seed42_RMSProp_buffer500k_50M_Frames_momentum_zero.pth
+  checkpoint_path: checkpoints/breakout/ddqn_seed42_RMSProp_buffer500k_50M_Frames_momentum_zero.pth
