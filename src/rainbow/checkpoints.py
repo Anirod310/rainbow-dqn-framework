@@ -7,8 +7,8 @@ def save_checkpoint(
     episodes,
     frame_count,
     average_reward,
-    evaluation_mean_reward,
-    training_duration_seconds,
+    evaluation_mean_reward=0,
+    training_duration_seconds=0,
     config=None,
 ):
     checkpoint = {
