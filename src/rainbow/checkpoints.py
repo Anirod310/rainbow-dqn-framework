@@ -7,8 +7,8 @@ def save_checkpoint(
     episodes,
     frame_count,
     average_reward,
-    evaluation_mean_reward=0,
-    start_time=0,
+    evaluation_mean_reward,
+    training_duration_seconds,
     config=None,
 ):
     checkpoint = {
@@ -17,8 +17,8 @@ def save_checkpoint(
     "episodes": episodes + 1,
     "emulator_frames": frame_count,
     "best_interval_training_episode_average_reward": average_reward,
-    "evaluation_mean_reward": 0,
-    "training_duration_seconds": time.perf_counter() - start_time,
+    "evaluation_mean_reward": evaluation_mean_reward,
+    "training_duration_seconds": training_duration_seconds,
     "config": config,
 }
 

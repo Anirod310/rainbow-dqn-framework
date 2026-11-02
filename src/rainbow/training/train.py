@@ -69,7 +69,7 @@ try:
                             episodes=num_train_episodes,
                             frame_count=frame_count,
                             average_reward=average_reward,
-                            start_time=start_time,
+                            training_duration_seconds=elapsed_time,
                             config=config)
 
                     best_average_reward = average_reward
@@ -144,7 +144,7 @@ try:
                         episodes=num_train_episodes,
                         frame_count=frame_count,
                         average_reward=average_reward,
-                        start_time=start_time,
+                        training_duration_seconds=elapsed_time,
                         config=config)
 
                 best_average_reward = average_reward
@@ -160,7 +160,7 @@ try:
                         episodes=episode+1,
                         frame_count=frame_count,
                         average_reward=average_reward,
-                        start_time=start_time,
+                        training_duration_seconds=elapsed_time,
                         config=config)
 
     pbar.close()
