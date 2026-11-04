@@ -47,10 +47,7 @@ episode_rewards_sum = 0
 recent_episode_rewards = deque(maxlen=reward_window_size)
 best_average_reward = float('-inf')
 
-
 loss = 0
-
-
 
 start_time = time.perf_counter()
 
