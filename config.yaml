@@ -18,6 +18,9 @@ preprocessing:
   frame_stack_size: 4
   image_size: [84, 84]
 
+model:
+  dueling_network: true
+
 agent:
   epsilon_start: 1.0
   epsilon_end: 0.1

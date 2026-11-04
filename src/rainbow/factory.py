@@ -2,8 +2,10 @@ import gymnasium as gym
 import ale_py
 
 from .models.complete_model import CompleteModel
-from.models.backbone.mlp_backbone import MLPBackbone
-from.models.backbone.cnn_backbone import CNNBackbone
+from .models.backbone.mlp_backbone import MLPBackbone
+from .models.backbone.cnn_backbone import CNNBackbone
+from .models.heads.q_value_head import QValueHead
+from .models.heads.dueling_head import DuelingHead
 
 from .agent.agent import Agent
 
@@ -102,10 +104,16 @@ class Factory():
         else : 
             backbone = MLPBackbone
 
-        self.online_model = CompleteModel(input_dim, output_dim, backbone)
+        if self.config['model']['dueling_network'] : 
+            head = DuelingHead
+        else:
+            head = QValueHead
+
+        self.online_model = CompleteModel(input_dim, output_dim, backbone, head)
         
-        self.target_model = CompleteModel(input_dim, output_dim, backbone)
+        self.target_model = CompleteModel(input_dim, output_dim, backbone, head)
         self.target_model.load_state_dict(self.online_model.state_dict())
+        self.target_model.requires_grad_(False)
 
         return self.online_model, self.target_model
 

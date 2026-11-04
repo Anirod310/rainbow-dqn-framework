@@ -4,7 +4,7 @@ from ..interface_model import BaseModel
 class MLPBackbone(BaseModel):
     def __init__(self, input_dim):
         super().__init__()
-        self.output_dim = 128
+        self.output_dim = 128 #We hardcode output shape. TODO -> compute it from the model
         self.model = nn.Sequential(
                             nn.Linear(input_dim, 128),
                             nn.ReLU(),
