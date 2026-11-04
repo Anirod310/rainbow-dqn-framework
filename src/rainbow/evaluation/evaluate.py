@@ -40,7 +40,7 @@ checkpoint_name = Path(config['evaluate']['checkpoint_path']).stem
 average_rewards = 0
 
 
-print_checkpoint_infos(checkpoint)
+print_checkpoint_infos(checkpoint) #way more flexible 
 
 '''print(f"----------Configuration----------\n"
       f"checkpoint : {checkpoint_name}\n"

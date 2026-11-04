@@ -29,7 +29,7 @@ replay_buffer:
 
 learning:
   DDQN:
-    enabled: true
+    enabled: false
 
   optimizer:
     name: RMSprop
@@ -51,11 +51,11 @@ learning:
 
 training:
   num_episodes: 50000
-  total_frames: 50000000
+  total_frames: 30000000
   replay_learning_start: 50000
 
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/pong/seed42_buffer300k_15kEps.pth
+  checkpoint_path: checkpoints/pong/dqn_seed41_buffer500k_30M_frames.pth
 
