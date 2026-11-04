@@ -1,6 +1,6 @@
 environment:
   type: atari
-  name: ALE/Pong-v5
+  name: ALE/SpaceInvaders-v5
   frameskip_env: 1
   frameskip_wrap: 4
   render_mode: human
@@ -19,7 +19,8 @@ preprocessing:
   image_size: [84, 84]
 
 model:
-  dueling_network: true
+  dueling_network:
+    enabled: false
 
 agent:
   epsilon_start: 1.0
@@ -27,7 +28,7 @@ agent:
   annealing_duration: 1000000
 
 replay_buffer:
-  memory_capacity: 500000
+  memory_capacity: 300000
   mini_batch_size: 32
 
 learning:
@@ -53,12 +54,14 @@ learning:
   update_frequency: 4 #Learning occurs each update_frequency agent actions
 
 training:
-  num_episodes: 50000
-  total_frames: 30000000
+  num_episodes: 30000
+  total_frames: 50000000
   replay_learning_start: 50000
+  print_interval_frames: 1000000
+  reward_window_size: 100
 
 evaluate:
   num_render_episodes: 10 
   num_episodes: 100
-  checkpoint_path: checkpoints/pong/dqn_seed41_buffer500k_30M_frames.pth
+  checkpoint_path: checkpoints/space_invaders/dqn_seed41_buffer300k_50M_frames_momentum_zero.pth
 

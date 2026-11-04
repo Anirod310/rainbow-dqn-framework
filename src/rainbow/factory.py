@@ -104,7 +104,7 @@ class Factory():
         else : 
             backbone = MLPBackbone
 
-        if self.config['model']['dueling_network'] : 
+        if self.config['model']['dueling_network']['enabled']: 
             head = DuelingHead
         else:
             head = QValueHead

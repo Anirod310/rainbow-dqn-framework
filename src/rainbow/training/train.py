@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import time
 from tqdm import tqdm
+from collections import deque
 
 #----------Object construction part---------
 
@@ -38,12 +39,18 @@ pbar = tqdm(total=total_frames, unit="frame", unit_scale=True)
 last_frame_count = 0
 episodes_in_interval = 0
 
+print_interval_frames = config['training']['print_interval_frames']
+reward_window_size = config['training']['reward_window_size']
+next_print_frame = print_interval_frames
+
 episode_rewards_sum = 0
+recent_episode_rewards = deque(maxlen=reward_window_size)
 best_average_reward = float('-inf')
+
 
 loss = 0
 
-print_interval = max(1, num_train_episodes // 20)
+
 
 start_time = time.perf_counter()
 
@@ -113,8 +120,7 @@ try:
                 observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch = replay_buffer.select_random_mini_batch()
                 loss = learner.learning_loop(observation_batch, action_batch, reward_batch, next_observation_batch, terminated_batch, truncated_batch)
 
-        episode_rewards_sum += episode_rewards
-        episodes_in_interval += 1
+        recent_episode_rewards.append(episode_rewards)
 
         elapsed_time = time.perf_counter() - start_time
         hours = int(elapsed_time // 3600)
@@ -124,13 +130,13 @@ try:
         pbar.update(frame_count - last_frame_count)
         last_frame_count = frame_count
         
-        if (episode + 1) % print_interval == 0:
-            average_reward = episode_rewards_sum / print_interval
+        if frame_count >= next_print_frame:
+            average_reward = episode_rewards_sum / len(recent_episode_rewards)
             tqdm.write("-------------------------------------------\n"
                        f"Episode : {episode + 1}"
                        f"\nFrames : {frame_count}"
                        f"\nEpisode Rewards : {episode_rewards}\n"
-                       f"Average Reward over last {print_interval} episodes : {average_reward}"
+                       f"Average Reward over last {len(recent_episode_rewards)} episodes : {average_reward:.2f}"
                        f"\nloss : {loss}"
                        f"\nEpsilon : {agent.epsilon}"
                        f"\nTraining time : {hours}h {minutes}m {seconds}s")
@@ -151,7 +157,6 @@ try:
 
             
             episode_rewards_sum = 0
-            episodes_in_interval = 0
 
 
     if average_reward >  best_average_reward:
