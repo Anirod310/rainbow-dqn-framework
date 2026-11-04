@@ -57,7 +57,7 @@ training:
   num_episodes: 30000
   total_frames: 50000000
   replay_learning_start: 50000
-  print_interval_frames: 1000000
+  print_interval_frames: 5000000
   reward_window_size: 100
 
 evaluate:

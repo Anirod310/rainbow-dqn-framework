@@ -37,13 +37,11 @@ step_count = 0
 
 pbar = tqdm(total=total_frames, unit="frame", unit_scale=True)
 last_frame_count = 0
-episodes_in_interval = 0
 
 print_interval_frames = config['training']['print_interval_frames']
 reward_window_size = config['training']['reward_window_size']
 next_print_frame = print_interval_frames
 
-episode_rewards_sum = 0
 recent_episode_rewards = deque(maxlen=reward_window_size)
 best_average_reward = float('-inf')
 
@@ -55,31 +53,6 @@ try:
     for episode in range(num_train_episodes):
         
         if frame_count >= total_frames:
-            if episodes_in_interval > 0:
-                average_reward = episode_rewards_sum / episodes_in_interval
-                tqdm.write(
-                    "------------------------------------------------------------------\n"
-                    f"Final partial interval: {episodes_in_interval} completed episodes\n"
-                    f"Frames: {frame_count}\n"
-                    f"Average reward: {average_reward}"
-                )
-
-                if average_reward >  best_average_reward:
-
-                    tqdm.write("best average reward reached ! Checkpoint saved")
-
-                    save_checkpoint(online_model=online_model,
-                            seed=seed,
-                            episodes=num_train_episodes,
-                            frame_count=frame_count,
-                            average_reward=average_reward,
-                            training_duration_seconds=elapsed_time,
-                            config=config)
-
-                    best_average_reward = average_reward
-            else : 
-                tqdm.write("Frame limit reached; no completed episodes in the final interval.")
-
             tqdm.write(f"Frame limit ({total_frames}) reached.")
             break
 
@@ -128,7 +101,7 @@ try:
         last_frame_count = frame_count
         
         if frame_count >= next_print_frame:
-            average_reward = episode_rewards_sum / len(recent_episode_rewards)
+            average_reward = sum(recent_episode_rewards) / len(recent_episode_rewards)
             tqdm.write("-------------------------------------------\n"
                        f"Episode : {episode + 1}"
                        f"\nFrames : {frame_count}"
@@ -144,7 +117,7 @@ try:
 
                 save_checkpoint(online_model=online_model,
                         seed=seed,
-                        episodes=num_train_episodes,
+                        episodes=episode + 1,
                         frame_count=frame_count,
                         average_reward=average_reward,
                         training_duration_seconds=elapsed_time,
@@ -153,22 +126,33 @@ try:
                 best_average_reward = average_reward
 
             
-            episode_rewards_sum = 0
+            next_print_frame += print_interval_frames
 
 
-    if average_reward >  best_average_reward:
-        save_checkpoint(online_model=online_model,
-                        seed=seed,
-                        episodes=episode+1,
-                        frame_count=frame_count,
-                        average_reward=average_reward,
-                        training_duration_seconds=elapsed_time,
-                        config=config)
+    if len(recent_episode_rewards) > 0:
+
+        average_reward = sum(recent_episode_rewards) / len(recent_episode_rewards)
+
+        if average_reward > best_average_reward:
+
+            tqdm.write("Final best average reward reached! Checkpoint saved.")
+
+            save_checkpoint(
+                online_model=online_model,
+                seed=seed,
+                episodes=episode + 1,
+                frame_count=frame_count,
+                average_reward=average_reward,
+                training_duration_seconds=elapsed_time,
+                config=config
+            )
+
+            best_average_reward = average_reward
 
     pbar.close()
     
 except KeyboardInterrupt:
-    print("\n Training interrupted. Last best checkpoint saved\n")
+    print("\n Training interrupted. Last best checkpoint saved if created\n")
 
 
 
