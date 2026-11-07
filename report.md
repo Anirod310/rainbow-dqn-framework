@@ -257,3 +257,37 @@ The results show that the agent successfully learned to land in LunarLander, wit
 Overall, these experiments showed that the framework could successfully learn in a non-Atari environment with vector observations, achieving promising evaluation rewards across different training runs. This suggests that the core DQN implementation is functional, although it does not guarantee that every component is correct. 
 
 The difference between these results and those obtained on Atari may therefore come from the image preprocessing pipeline, Atari-specific environment handling, or differences in training configurations. Further investigation of these components will be necessary to identify the main causes of the performance gap with the original DQN paper.
+
+*<u>Update after investigations</u>*
+
+<u>Root cause: the RMSprop momentum parameter</u>
+
+After doing some research, the plateau and the subsequent collapse seen on Breakout and Space Invaders (a plateau after roughly 15–20 M frames, then performance dropping towards random-level play) were not caused by the replay buffer size, as I initially suspected. They came from a mismatch between the optimizer described in the paper and the one I configured in PyTorch.
+
+Extended Data Table 1 of Mnih et al. (2015) lists two hyperparameters set to 0.95: the “gradient momentum” and the “squared gradient momentum”. I had mapped them to PyTorch’s RMSprop as momentum=0.95 and alpha=0.95. They do not mean the same thing:
+
+- In the paper, both values are decay rates of running averages: one for the gradient, one for the squared gradient. This is the centered RMSprop variant, which divides the gradient by an estimate of its standard deviation.  
+
+- In PyTorch, alpha is the decay rate of the squared-gradient average, and centered=True also tracks the gradient average. These two options already cover both of the paper’s 0.95 values.
+PyTorch’s momentum is a separate parameter. It adds a classical momentum term on the update itself (buf = momentum * buf + grad / avg, then θ -= lr * buf). With momentum=0.95, the effective step size in steady state is roughly 20 times larger than intended, which makes training unstable once the Q-values become large.
+
+This is consistent with what I observed: a fast start, a plateau, and then a slow degradation of the policy as the updates became too aggressive.
+
+Fix
+
+I set momentum: 0.0 and kept alpha: 0.95, centered: true, eps: 0.01 and lr: 0.00025. The other hyperparameters were left unchanged. (The remaining small difference is that PyTorch adds eps outside the square root, whereas the paper adds the “min squared gradient” inside it.)
+
+Results after the fix
+
+With this change, the agent no longer plateaus or collapses, and the results match those of the paper:
+
+|Game	| Paper (DQN) | Before fix | After fix
+|---|---:|---: |---:|
+|Breakout | 401.2 ± 26.9| 265.86 (2.35 at 83 M frames) | 395
+|Pong	| 18.9 ± 1.3| 20.49 | 20.78
+|Space Invaders | 1976 ± 893 | 676.35 | 1028 ± 100
+
+<u>Lesson learned</u>
+
+Hyperparameter names are not portable between frameworks. “Momentum” in a paper can refer to the decay of a running average, while the same word in a library refers to a different mechanism. When reproducing a paper, I now check the optimizer’s update equations in the library’s source code rather than relying on parameter names alone.
+

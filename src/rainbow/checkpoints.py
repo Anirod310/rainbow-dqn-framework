@@ -14,7 +14,7 @@ def save_checkpoint(
     checkpoint = {
     "model_state_dict": online_model.state_dict(),
     "seed": seed,
-    "episodes": episodes + 1,
+    "episodes": episodes,
     "emulator_frames": frame_count,
     "best_interval_training_episode_average_reward": average_reward,
     "evaluation_mean_reward": evaluation_mean_reward,
