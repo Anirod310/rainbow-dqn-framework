@@ -258,7 +258,7 @@ Overall, these experiments showed that the framework could successfully learn in
 
 The difference between these results and those obtained on Atari may therefore come from the image preprocessing pipeline, Atari-specific environment handling, or differences in training configurations. Further investigation of these components will be necessary to identify the main causes of the performance gap with the original DQN paper.
 
-*<u>Update after investigations</u>*
+**Update after investigations**
 
 <u>Root cause: the RMSprop momentum parameter</u>
 
@@ -291,3 +291,16 @@ With this change, the agent no longer plateaus or collapses, and the results mat
 
 Hyperparameter names are not portable between frameworks. “Momentum” in a paper can refer to the decay of a running average, while the same word in a library refers to a different mechanism. When reproducing a paper, I now check the optimizer’s update equations in the library’s source code rather than relying on parameter names alone.
 
+### 2 - Double DQN
+
+#### A) Atari
+
+*<u>Implementation and Hyperparameters</u>*
+
+The next step towards the complete Rainbow DQN architecture is Double DQN ([van Hasselt et al., 2016](https://arxiv.org/abs/1509.06461)). It fixes a problem of the standard DQN target: it takes a `max` over noisy Q values, so it tends to overestimate them.
+
+The idea is simple: we split the choice of the action and its evaluation. For the target, the online network chooses the best next action, then the target network gives the Q value of this action. The target is then : *r + γ · Q_target(s', argmax_a Q_online(s', a))*.
+
+This reduces the overestimation and makes the learning more stable. It costs nothing more, because the two networks already exist in the baseline.
+
+In my framework, it is just one option in the config (`learning.DDQN.enabled`), and all the other hyperparameters stay the same as in the baseline.
