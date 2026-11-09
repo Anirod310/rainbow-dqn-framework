@@ -1,6 +1,9 @@
 import numpy as np
 
 class ReplayBuffer():
+
+    #TODO : PER Implementation
+
     def __init__(self, config):
         self.memory = []
         self.pos = 0
