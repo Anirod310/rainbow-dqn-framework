@@ -2,7 +2,7 @@ import numpy as np
 
 class ReplayBuffer():
 
-    #TODO : PER Implementation
+    #TODO : Full PER Implementation
 
     def __init__(self, config):
         self.memory = []
